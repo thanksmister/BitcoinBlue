@@ -18,8 +18,6 @@ package com.thanksmister.btcblue.domain;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.otto.Bus;
-import com.thanksmister.btcblue.events.ApplicationBus;
 
 import javax.inject.Singleton;
 
@@ -37,12 +35,5 @@ public final class DomainModule
     Gson provideGson()
     {
         return new GsonBuilder().create();
-    }
-
-    @Provides
-    @Singleton
-    Bus provideBus()
-    {
-        return new ApplicationBus();
     }
 }

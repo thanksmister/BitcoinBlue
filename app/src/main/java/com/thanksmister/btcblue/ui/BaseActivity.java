@@ -16,7 +16,6 @@
 
 package com.thanksmister.btcblue.ui;
 
-import android.support.v7.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,16 +23,12 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.otto.Bus;
 import com.thanksmister.btcblue.Injector;
 import com.thanksmister.btcblue.R;
-import com.thanksmister.btcblue.events.NetworkEvent;
 
 import javax.inject.Inject;
 
@@ -42,11 +37,6 @@ import butterknife.ButterKnife;
 /** Base activity which sets up a per-activity object graph and performs injection. */
 public abstract class BaseActivity extends AppCompatActivity 
 {
-    @Inject
-    Bus bus;
-
-    AlertDialog progressDialog;
-
     @Override 
     protected void onCreate(Bundle savedInstanceState) 
     {
@@ -68,8 +58,6 @@ public abstract class BaseActivity extends AppCompatActivity
     {
         super.onPause();
 
-        bus.unregister(this);
-
         getApplicationContext().unregisterReceiver(connReceiver);
     }
 
@@ -78,8 +66,6 @@ public abstract class BaseActivity extends AppCompatActivity
 
         super.onResume();
         
-        bus.register(this);
-
         getApplicationContext().registerReceiver(connReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
     
@@ -90,9 +76,10 @@ public abstract class BaseActivity extends AppCompatActivity
             ConnectivityManager connectivityManager = ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
             NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
             if(currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-                bus.post(NetworkEvent.CONNECTED);
+               // do nothing
             } else {
-                bus.post(NetworkEvent.DISCONNECTED);
+                Snackbar.make(findViewById(R.id.coordinatorLayout), getString(R.string.error_no_internet), Snackbar.LENGTH_LONG)
+                        .show(); // Do not forget to show!
             }
         }
     };
@@ -112,31 +99,5 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void toast(String message)
     {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-    
-    public void showProgressDialog()
-    {
-        if(progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
-            return;
-        }
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View dialogView = inflater.inflate(R.layout.dialog_progress, null);
-        TextView progressDialogMessage = (TextView) dialogView.findViewById(R.id.progressDialogMessage);
-        progressDialogMessage.setText(getString(R.string.dialog_progress_text));
-
-        progressDialog = new AlertDialog.Builder(this)
-                .setView(dialogView)
-                .show();
-    }
-
-    public void hideProgressDialog()
-    {
-        if(progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
     }
 }

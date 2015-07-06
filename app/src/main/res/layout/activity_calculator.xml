@@ -45,17 +45,5 @@
         </FrameLayout>
         
     </android.support.v4.widget.NestedScrollView>
-
-    <!--<android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:clickable="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:src="@drawable/ic_action_export"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:layout_gravity="bottom|end"
-            app:elevation="4dp"
-            app:fabSize="normal"/>-->
-
+    
 </android.support.design.widget.CoordinatorLayout>

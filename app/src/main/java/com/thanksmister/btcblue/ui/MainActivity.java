@@ -5,10 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.internal.widget.ContentFrameLayout;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -16,14 +13,11 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.squareup.otto.Subscribe;
 import com.squareup.sqlbrite.SqlBrite;
 import com.thanksmister.btcblue.R;
 import com.thanksmister.btcblue.data.ExchangeService;
 import com.thanksmister.btcblue.data.api.model.Exchange;
 import com.thanksmister.btcblue.db.DbManager;
-import com.thanksmister.btcblue.db.ExchangeItem;
-import com.thanksmister.btcblue.events.NetworkEvent;
 import com.thanksmister.btcblue.ui.spinner.ExchangeAdapter;
 import com.thanksmister.btcblue.utils.Calculations;
 import com.thanksmister.btcblue.utils.Conversions;
@@ -121,15 +115,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @InjectView(R.id.content)
     View content;
-
-    /*@OnItemSelected(R.id.exchangeSpinner)
-    void onItemSelected(int position)
-    {
-        Exchange exchange = (Exchange) exchangeSpinner.getSelectedItem();
-        Timber.d("Exchange Selected1: " + exchange.getDisplay_name());
-        exchangeService.setSelectedExchange(exchange.getDisplay_name());
-        setExchange(exchange);
-    }*/
     
     Handler handler;
     ExchangeAdapter adapter;
@@ -318,19 +303,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
     }
-
-    @Subscribe
-    public void onNetworkEvent(NetworkEvent event)
-    {
-        if (event == NetworkEvent.DISCONNECTED) {
-
-            //toast(R.string.error_no_internet);
-
-            Snackbar.make(findViewById(R.id.coordinatorLayout), getString(R.string.error_no_internet), Snackbar.LENGTH_LONG)
-                    .show(); // Do not forget to show!
-        }
-    }
-
+    
     private void updateSelectedExchange(final List<Exchange> exchanges)
     {
         String name = exchangeService.getSelectedExchangeName();
@@ -390,9 +363,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         dataFrom.setText(Html.fromHtml(getString(R.string.data_provided_by)));
         dataFrom.setMovementMethod(LinkMovementMethod.getInstance());
     }
-
     
-
     private enum MarketViewType
     {
         USD_BTC,
