@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">Bitcoin Blue</string>
+    <string name="desc">""</string>
+
+    <string name="btc">BTC</string>
+    <string name="usd">USD</string>
+
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_save">Save</string>
+    <string name="button_order">Order</string>
+    <string name="button_edit">Edit</string>
+    <string name="button_reload">Reload</string>
+
+    <string name="time_seconds">seconds</string>
+    <string name="time_minutes">minutes</string>
+    <string name="time_minute">minute</string>
+
+    <string name="menu_action_reset">Reset</string>
+    <string name="menu_action_refresh">Refresh</string>
+    <string name="menu_action_calculator">Calculator</string>
+    <string name="menu_action_receipt">Receipt</string>
+
+    <string name="error_generic_server_down">Temporarily unable to load data.</string>
+    <string name="error_server_time_out">Call to the service timed out</string>
+    <string name="error_data">There was an error with the data sent.</string>
+
+    <string name="title_markets">Markets</string>
+    <string name="title_calculator">Calculator</string>
+    <string name="title_ars_usdb">ARS/USDB</string>
+    <string name="title_ars_usd">ARS/USD</string>
+    <string name="title_ars_btc">ARS/BTC</string>
+    <string name="title_usd_btc">USD/BTC</string>
+    <string name="date_updated_text"><![CDATA[LAST UPDATE: %1$s ]]></string>
+    <string name="date_updated_text_recent"><![CDATA[UPDATED: <font color="#6f9e2f">%1$s</font> ]]></string>
+    <string name="date_updated_text_stale"><![CDATA[UPDATED: <font color="#D5B213">%1$s</font> ]]></string>
+    <string name="date_updated_text_old"><![CDATA[UPDATED: <font color="#a34835">%1$s</font>]]></string>
+
+    <string name="sales_negative"><![CDATA[<font color="#8d8d8d">%1$s</font> (<font color="#a34835">-%2$s</font>)]]></string>
+    <string name="sales_positive"><![CDATA[<font color="#8d8d8d">%1$s</font> (<font color="#6f9e2f">+%2$s</font>)]]></string>
+    <string name="official_text_usd">OFFICIAL: %1$s ARS/USD</string>
+    <string name="official_text_btc">OFFICIAL: %1$s ARS/BTC</string>
+    <string name="buy">BUY</string>
+    <string name="sell">SELL</string>
+    <string name="ars_amount">ARS AMOUNT</string>
+    <string name="ars">ARS</string>
+    <string name="fees">FEES</string>
+    <string name="commission">COMMISSION</string>
+    <string name="percent">  %  </string>
+    <string name="usd_amount">USD AMOUNT</string>
+    <string name="sale_price_ars">PRICE ARS</string>
+    <string name="sale_price_usd">PRICE USD</string>
+    <string name="btc_amount">BTC AMOUNT</string>
+    <string name="button_reset">RESET</string>
+    <string name="date_updated">UPDATED </string>
+    <string name="toast_data_fresh">Data appears fresh...</string>
+    <string name="data_provided_by"><![CDATA[Developed by <a href="http://thanksmister.com">ThanksMister</a> with data provided by <a href="http://bluelytics.com.ar">Bluelytics</a> and <a href="https://bitcoinaverage.com">BitcoinAverage</a>.]]></string>
+    
+    <string name="text_saved_to_clipboard"> saved to clipboard!</string>
+    <string name="text_receipt_hint">File name</string>
+    <string name="dialog_receipt_description">Exports a comma delimited list of the calculator values. The data will be saved with the date appended, adding a name is optional.</string>
+    <string name="must_upgrade_description"><![CDATA[A new version of <b>Bitcoin Blue</b> is available under a new Google Play listing (the old listing will be removed). This version of the application will no longer be supported going forward but will still function. Please upgrade to the new version and uninstall this version when ready.]]></string>
+    
+    <string name="action_find_location">Find Location</string>
+    
+    <string name="long_text">Android 5.0 Lollipop was one of the most significant Android releases ever, 
+        in no small part due to the introduction of material design,
+        a new design language that refreshed the entire Android experience
+    </string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="error_no_internet">Weak or no internet connection</string>
+    <string name="error_login">There was a login error. The error has been reported.</string>
+    <string name="error_generic_error">Service unreachable, check network connection.</string>
+    <string name="error_unknown_error">An unknown error has occurred.</string>
+    <string name="error_service_error">Service produced resource not found error.</string>
+    
+    <string name="menu_create_receipt">Export data</string>
+    <string name="dialog_progress">Progress...</string>
+    <string name="dialog_progress_text">Initializing data...</string>
+    <string name="title_market">MARKET</string>
+    <string name="title_sale_price">SALE PRICE</string>
+    <string name="title_total">TOTAL</string>
+
+</resources>

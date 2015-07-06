@@ -1,0 +1,665 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <!--<TextView
+            android:id="@+id/marketName"
+            style="@style/TextAppearance.AppCompat.Small"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>-->
+
+    <android.support.v7.widget.CardView
+            app:cardUseCompatPadding="true"
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/card_margin"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                style="@style/Widget.CardContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/body_text_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_market"/>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_list_spacing"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copyARS"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="42dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editARS"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionNext"
+                            android:inputType="numberDecimal"
+                            android:digits="0123456789."
+                            android:hint="@string/ars_amount"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/ars"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_space_small"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copyUSD"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editUSD"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/usd_amount"
+                            android:imeOptions="actionNext"
+                            android:inputType="numberDecimal"
+                            android:digits="0123456789."/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/usd"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_space_small"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copyBTC"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editBTC"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/btc_amount"
+                            android:imeOptions="actionNext"
+                            android:inputType="numberDecimal"
+                            android:digits="0123456789."/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/btc"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_list_spacing"/>
+
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left|center_vertical"
+                        android:layout_gravity="left|center_vertical"
+                        android:paddingLeft="@dimen/activity_list_padding"
+                        android:drawablePadding="4dp"
+                        android:drawableLeft="@drawable/ic_action_undo"
+                        android:text="@string/button_reset"/>
+
+                <Button
+                        android:id="@+id/clearExchange"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        style="@style/BorderlessButtonStyle"/>
+
+                <View style="@style/DividerHorizontal"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+            app:cardUseCompatPadding="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:layout_marginLeft="@dimen/card_margin"
+            android:layout_marginRight="@dimen/card_margin">
+
+        <LinearLayout
+                style="@style/Widget.CardContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/body_text_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_sale_price"/>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_list_spacing"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copySaleARS"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"/>
+
+                <Space
+                        android:layout_width="4dp"
+                        android:layout_height="match_parent"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editSaleARS"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/sale_price_ars"
+                            android:imeOptions="actionNext"
+                            android:inputType="numberDecimal"
+                            android:digits="0123456789."
+                            />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/ars"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_space_small"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copySaleUSD"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"/>
+
+                <Space
+                        android:layout_width="4dp"
+                        android:layout_height="match_parent"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editSaleUSD"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/sale_price_usd"
+                            android:imeOptions="actionNext"
+                            android:inputType="numberDecimal"
+                            android:digits="0123456789."
+                            />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/usd"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_space_small"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                <ImageButton
+                        android:id="@+id/copyCommission"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"/>
+
+                <Space
+                        android:layout_width="4dp"
+                        android:layout_height="match_parent"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editCommission"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/commission"
+                            android:imeOptions="actionNext"
+                            android:inputType="number"
+                            android:digits="0123456789."/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/percent"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_space_small"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                <ImageButton
+                        android:id="@+id/copyFee"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"/>
+
+                <Space
+                        android:layout_width="4dp"
+                        android:layout_height="match_parent"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                    <EditText
+                            android:id="@+id/editFee"
+                            android:theme="@style/EditTextTheme"
+                            android:textColor="@color/body_text_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/fees"
+                            android:imeOptions="actionNext"
+                            android:inputType="number"
+                            android:digits="0123456789."/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/btc"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_space_small"/>
+
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left|center_vertical"
+                        android:layout_gravity="left|center_vertical"
+                        android:paddingLeft="16dp"
+                        android:drawablePadding="4dp"
+                        android:drawableLeft="@drawable/ic_action_undo"
+                        android:text="@string/button_reset"/>
+
+                <Button
+                        android:id="@+id/clearFees"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        style="@style/BorderlessButtonStyle"/>
+
+                <View style="@style/DividerHorizontal"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+            app:cardUseCompatPadding="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:layout_marginLeft="@dimen/card_margin"
+            android:layout_marginRight="@dimen/card_margin">
+
+        <LinearLayout
+                style="@style/Widget.CardContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/body_text_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_total"/>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_list_spacing"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_list_spacing"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copyTotalARS"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="42dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:id="@+id/totalARS"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textIsSelectable="true"/>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/ars"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_list_spacing"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_list_spacing"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copyTotalUSD"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="42dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:id="@+id/totalUSD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textIsSelectable="true"/>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/usd"/>
+
+            </LinearLayout>
+
+            <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/activity_list_spacing"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_list_spacing"
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/copyTotalBTC"
+                        style="@style/BorderlessButtonStyle"
+                        android:layout_width="42dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_action_copy"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:id="@+id/totalBTC"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textIsSelectable="true"/>
+
+                <Space
+                        android:layout_width="12dp"
+                        android:layout_height="match_parent"/>
+
+                <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/body_text_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/btc"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

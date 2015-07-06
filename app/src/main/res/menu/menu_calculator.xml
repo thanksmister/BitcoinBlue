@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.thanksmister.btcblue.ui.CalculatorActivity">
+      
+    <item android:id="@+id/action_print"
+          android:title="@string/menu_create_receipt"
+          android:icon="@drawable/ic_action_export"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom"/>
+</menu>

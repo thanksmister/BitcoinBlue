@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_background">@color/gray_light</color>
+    <color name="primary">@color/blue</color>
+    <color name="primary_dark">#ff0083b2</color>
+    <color name="primary_light">#ff00b5e9</color>
+    <color name="accent">#0099cc</color>
+    <color name="primary_text">#ffffff</color>
+    <color name="secondary_text">#ffffff</color>
+   
+    <color name="colorPrimary">@color/blue</color>
+    <color name="colorPrimaryDark">#ff0083b2</color>
+
+    <color name="body_text_1">#8a000000</color>
+    <color name="body_text_2">#64000000</color>
+    <color name="body_text_3">#4d000000</color>
+    <color name="body_text_disabled">#ffcdcdcd</color>
+    <color name="body_text_blue_1">#0099cc</color>
+    <color name="body_text_1_inverse">#deffffff</color>
+    <color name="body_text_2_inverse">#8affffff</color>
+
+    <color name="transparent">#00000000</color>
+    
+    <color name="blue">#0099cc</color>
+    <color name="button_blue">#0d7b9c</color>
+    <color name="blue_pressed">#ff0083b2</color>
+    <color name="button_blue_pressed">#0D5A7A</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#fe818181</color>
+    <color name="gray_light">#eeeeee</color>
+    <color name="gray_medium">#ffc0c0c0</color>
+    <color name="gray_dark">#ffa4a4a4</color>
+    
+</resources>
