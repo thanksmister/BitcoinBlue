@@ -25,14 +25,18 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.thanksmister.btcblue.Injector;
 import com.thanksmister.btcblue.R;
+import com.thanksmister.btcblue.utils.ServiceUtils;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import rx.functions.Action0;
+import timber.log.Timber;
 
 /** Base activity which sets up a per-activity object graph and performs injection. */
 public abstract class BaseActivity extends AppCompatActivity 
@@ -78,16 +82,85 @@ public abstract class BaseActivity extends AppCompatActivity
             if(currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
                // do nothing
             } else {
-                Snackbar.make(findViewById(R.id.coordinatorLayout), getString(R.string.error_no_internet), Snackbar.LENGTH_LONG)
-                        .show(); // Do not forget to show!
+                snack(getString(R.string.error_no_internet));
             }
         }
     };
-    
+
     protected void reportError(Throwable throwable)
     {
-        if(throwable != null && throwable.getLocalizedMessage() != null)
-            toast(throwable.getLocalizedMessage());
+        if(throwable != null && throwable.getLocalizedMessage() != null) {
+            Timber.e("Data Error: " + throwable.getLocalizedMessage());
+        } else {
+            Timber.e("Null Error");
+        }
+    }
+
+    protected void handleError(Throwable throwable)
+    {
+        handleError(throwable, "", null);
+    }
+
+    protected void handleError(Throwable throwable, String label, Action0 action)
+    {
+        if(ServiceUtils.isNetworkError(throwable)) {
+            Timber.e("Data Error: " + "Code 503");
+            snackAction(getString(R.string.error_no_internet), label, action);
+        } else if(ServiceUtils.isHttp401Error(throwable)) {
+            Timber.e("Data Error: " + "Code 401");
+            snackAction(getString(R.string.error_no_internet), label, action);
+        } else if(ServiceUtils.isHttp500Error(throwable)) {
+            Timber.e("Data Error: " + "Code 500");
+            snackAction(getString(R.string.error_service_error), label, action);
+        } else if(ServiceUtils.isHttp404Error(throwable)) {
+            Timber.e("Data Error: " + "Code 404");
+            snackAction(getString(R.string.error_service_error), label, action);
+        } else if(ServiceUtils.isHttp400Error(throwable)) {
+            snackAction(getString(R.string.error_service_error), label, action);
+        } else if(throwable != null && throwable.getLocalizedMessage() != null) {
+            Timber.e("Data Error: " + throwable.getLocalizedMessage());
+            snackAction(throwable.getLocalizedMessage(), label, action);
+        } else {
+            snackAction(R.string.error_unknown_error, label, action);
+        }
+    }
+    
+    protected void snack(final String message)
+    {
+        Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    protected void snack(final int message)
+    {
+        Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    protected void snackAction(final int message, final String actionLabel, final Action0 action0)
+    {
+        Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
+                .setAction(actionLabel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        action0.call();
+                    }
+                })
+                .show();
+    }
+
+    protected void snackAction(final String message,  final String actionLabel, final Action0 action0)
+    {
+        Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
+                .setAction(actionLabel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        action0.call();
+                    }
+                })
+                .show();
     }
 
     protected void toast(int messageId)

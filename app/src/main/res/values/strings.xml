@@ -83,5 +83,6 @@
     <string name="title_market">MARKET</string>
     <string name="title_sale_price">SALE PRICE</string>
     <string name="title_total">TOTAL</string>
+    <string name="snack_retry">Retry</string>
 
 </resources>

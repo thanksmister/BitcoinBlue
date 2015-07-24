@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscription;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.subscriptions.Subscriptions;
 
@@ -43,9 +44,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Inject
     DbManager dbManager;
-
-    @Inject
-    SqlBrite db;
     
     @InjectView(R.id.dataFrom)
     TextView dataFrom;
@@ -223,7 +221,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     
     private void setupFab()
     {
-        //fab.setBackgroundTintList(getResources().getColorStateList(R.drawable.fab_background));
         fab.setOnClickListener(this);
     }
 
@@ -298,8 +295,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public void call(Throwable throwable)
             {
                 onRefreshStop();
-                
-                reportError(throwable);
+
+                handleError(throwable, getString(R.string.snack_retry), new Action0()
+                {
+                    @Override
+                    public void call()
+                    {
+                        updateData();
+                    }
+                });
             }
         });
     }
