@@ -23,5 +23,5 @@ public class Bluelytic
     public String value_sell;
     public String value_buy;
     public String source;
-    public String date;
+    public String last_update;
 }

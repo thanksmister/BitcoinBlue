@@ -22,6 +22,7 @@ import com.thanksmister.btcblue.data.api.BitcoinAverage;
 import com.thanksmister.btcblue.data.api.Bluelytics;
 import com.thanksmister.btcblue.data.api.model.Bluelytic;
 import com.thanksmister.btcblue.data.api.model.Exchange;
+import com.thanksmister.btcblue.data.api.transforms.ResponseToBluelytics;
 import com.thanksmister.btcblue.data.api.transforms.ResponseToExchangeList;
 import com.thanksmister.btcblue.data.prefs.StringPreference;
 import com.thanksmister.btcblue.utils.Doubles;
@@ -60,106 +61,9 @@ public class ExchangeService
         this.bitcoinAverage = bitcoinAverage;
         this.blueLytics = blueLytics;
         this.sharedPreferences = sharedPreferences;
-        this.bluelyticsList = new ArrayList<Bluelytic>();
+        this.bluelyticsList = new ArrayList<>();
     }
-    
-    /*public Subscription getExchanges(final RefreshObserver<List<Exchange>> observer, final int startDelay)
-    {
-        Timber.d("getExchanges");
-        
-        if(exchangesRequest != null) { // join the request
-            return exchangesRequest.subscribe(observer);
-        }
-
-        exchangesRequest = PublishSubject.create();  
-        exchangesRequest.subscribe(new Observer<List<Exchange>>() {
-            @Override
-            public void onCompleted() {
-
-                Timber.d("Exchanges Complete");
-                //exchangesRequest = null;
-                observer.onRefreshEnd();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-                Timber.d("Exchanges Error");
-                //exchangesRequest = null;
-                observer.onRefreshEnd();
-                //getExchangesFromDatabase(observer); // return exchanges now if we have them
-                exchangesRequest = null;
-                getExchanges(observer, 30000);
-            }
-
-            @Override 
-            public void onNext(List<Exchange> exchanges) {
-
-                Timber.d("Exchanges Returned");
-                
-                if(exchanges != null) {       
-                    Collections.sort(exchanges, new ExchangeNameComparator());
-                    String date = Dates.getLocalDateMilitaryTime(); 
-                    for (Exchange exchange:exchanges) {
-                        exchange.date = date; // set everything to the same time
-                    }
-                   
-                    setExchangeExpireTime();
-                }
-
-                observer.onRefreshEnd();
-            }
-        });
-
-        Timber.d("Create Scheduler");
-        Subscription subscription = exchangesRequest.subscribe(observer);
-        Observable.create(new Observable.OnSubscribe<List<Exchange>>()
-        {
-            @Override
-            public void call(Subscriber<? super List<Exchange>> subscriber)
-            {
-                Schedulers.io().createWorker()
-                        .schedulePeriodically(new Action0()
-                        {
-                            @Override
-                            public void call()
-                            {
-                                Timber.d("Periodically");
-                                observer.onRefreshStart();
-
-                                getExchangesObservable().doOnNext(new Action1<List<Exchange>>()
-                                {
-                                    @Override
-                                    public void call(List<Exchange> exchanges)
-                                    {
-                                        Timber.d("On Next happened");
-                                        subscriber.onNext(exchanges);
-                                    }
-                                }).doOnError(new Action1<Throwable>()
-                                {
-                                    @Override
-                                    public void call(Throwable throwable)
-                                    {
-                                        subscriber.onError(throwable);
-                                    }
-                                }).subscribe();
-
-                            }
-                        }, startDelay, CHECK_EXCHANGE_DATA, TimeUnit.MILLISECONDS);
-            }
-        })
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(exchangesRequest);
-            
-        *//*getExchangesObservable()
-        .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(exchangesRequest);*//*
-        
-        return subscription;
-    }*/
-
+   
     public void setSelectedExchange(String name)
     {
         StringPreference preference = new StringPreference(sharedPreferences, PREFS_SELECTED_EXCHANGE, "Bitstamp");
@@ -176,15 +80,16 @@ public class ExchangeService
 
     private Observable<List<Exchange>> getBluelyticsSubscription(final List<Exchange> exchanges)
     {
-        return blueLytics.lastPrice()
-                .map(new Func1<List<Bluelytic>, List<Exchange>>()
+        return blueLytics.latestPrice()
+                .map(new ResponseToBluelytics())
+                .flatMap(new Func1<List<Bluelytic>, Observable<List<Exchange>>>()
                 {
                     @Override
-                    public List<Exchange> call(List<Bluelytic> bluelytics)
+                    public Observable<List<Exchange>> call(List<Bluelytic> bluelytics)
                     {
                         bluelyticsList = bluelytics;
                         setDollarBlueExpireTime();
-                        return setBlueDollarValues(bluelytics, exchanges);
+                        return Observable.just(setBlueDollarValues(bluelytics, exchanges));
                     }
                 });
     }
@@ -196,20 +101,20 @@ public class ExchangeService
         double blue_value_sell = 0;
         double blue_value_buy = 0;
 
+        // we only care about the oficial and the average blue rate
         for (Bluelytic bluelytic : bluelytics) {
             if (bluelytic.source.equals("oficial")) {
-                official_value_sell += Doubles.convertToDouble(bluelytic.value_sell);
-                official_value_buy += Doubles.convertToDouble(bluelytic.value_buy);
-            } else {
-                blue_value_sell += Doubles.convertToDouble(bluelytic.value_sell);
-                blue_value_buy += Doubles.convertToDouble(bluelytic.value_buy);
+                official_value_sell = Doubles.convertToDouble(bluelytic.value_sell);
+                official_value_buy = Doubles.convertToDouble(bluelytic.value_buy);
+            } else if (bluelytic.source.equals("blue")) {
+                blue_value_sell = Doubles.convertToDouble(bluelytic.value_sell);
+                blue_value_buy = Doubles.convertToDouble(bluelytic.value_buy);
             }
         }
-
-        int exchange_size = bluelytics.size() - 1;
+        
         for (Exchange exchange : exchanges) {
-            exchange.setBlue_ask(String.valueOf(blue_value_sell / exchange_size));
-            exchange.setBlue_bid(String.valueOf(blue_value_buy / exchange_size));
+            exchange.setBlue_ask(String.valueOf(blue_value_sell));
+            exchange.setBlue_bid(String.valueOf(blue_value_buy));
             exchange.setOfficial_ask(String.valueOf(official_value_sell));
             exchange.setOfficial_bid(String.valueOf(official_value_buy));
         }

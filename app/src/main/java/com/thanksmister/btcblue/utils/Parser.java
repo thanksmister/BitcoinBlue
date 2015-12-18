@@ -16,6 +16,7 @@
 
 package com.thanksmister.btcblue.utils;
 
+import com.thanksmister.btcblue.data.api.model.Bluelytic;
 import com.thanksmister.btcblue.data.api.model.Exchange;
 import com.thanksmister.btcblue.data.api.model.ExchangeData;
 
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class Parser
 {
@@ -42,10 +44,12 @@ public class Parser
         ArrayList<Exchange> exchanges = new ArrayList<Exchange>();
         //ArrayList<String> keyList = new ArrayList<String>();
 
-        if(jsonObject.has("timestamp")) try {
-            exchangeData.setTimestamp(jsonObject.getString("timestamp"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(jsonObject.has("timestamp")) {
+            try {
+                exchangeData.setTimestamp(jsonObject.getString("timestamp"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         Iterator<?> keys = jsonObject.keys();
@@ -86,5 +90,41 @@ public class Parser
         exchangeData.setExchanges(exchanges);
 
         return exchangeData;
+    }
+
+    public static List<Bluelytic> parseBluelytic(String response)
+    {
+        JSONObject jsonObject;
+        String last_update;
+        try {
+            jsonObject = new JSONObject(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        
+        ArrayList<Bluelytic> items = new ArrayList<>();
+        //ArrayList<String> keyList = new ArrayList<String>();
+
+        Iterator<?> keys = jsonObject.keys();
+        while( keys.hasNext() ){
+
+            String key = (String) keys.next();
+            try {
+                if( jsonObject.get(key) instanceof JSONObject) {
+                    JSONObject obj = (JSONObject) jsonObject.get(key);
+                    Bluelytic bluelytic = new Bluelytic();
+                    bluelytic.source = key;
+                    bluelytic.value_avg = obj.getString("value_avg");
+                    bluelytic.value_sell = obj.getString("value_sell");
+                    bluelytic.value_buy = obj.getString("value_buy");
+                    bluelytic.last_update = jsonObject.getString("last_update");
+                    items.add(bluelytic);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return items;
     }
 }

@@ -10,7 +10,6 @@ import android.os.Environment;
 import com.thanksmister.btcblue.data.api.model.Exchange;
 import com.thanksmister.btcblue.utils.Conversions;
 import com.thanksmister.btcblue.utils.Dates;
-import com.thanksmister.btcblue.utils.Strings;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,9 +32,7 @@ public class WriterService
     }
 
     public Observable<File> writeReceiptFileObservable(final String title, final Exchange exchange,
-                                                       final String btcValue, final String arsValue, final String usdValue,
-                                                       final String saleAmountARS, final String saleAmountUSD, final String saleAmountBTC, 
-                                                       final String commissionAmount, final String feeAmount)
+                                                       final String btcValue, final String arsValue, final String usdValue)
     {
 
         return Observable.create(new Observable.OnSubscribe<File>()
@@ -78,25 +75,7 @@ public class WriterService
 
                     bw.append("BTC AMOUNT");
                     bw.append(',');
-
-                    bw.append("SALE AMOUNT");
-                    bw.append(',');
-
-                    bw.append("COMMISSION");
-                    bw.append(',');
-
-                    bw.append("FEES BTC");
-                    bw.append(',');
-
-                    bw.append("SALE ARS");
-                    bw.append(',');
-
-                    bw.append("SALE USD");
-                    bw.append(',');
-
-                    bw.append("SALE BTC");
-                    bw.append(',');
-
+                    
                     bw.newLine();
 
                     bw.append(title);
@@ -121,25 +100,7 @@ public class WriterService
                     bw.append(',');
 
                     bw.append(btcValue);
-                    bw.append(',');
-
-                    bw.append(Conversions.formatCurrencyAmount(saleAmountARS));
-                    bw.append(',');
-
-                    bw.append(commissionAmount);
-                    bw.append(',');
-
-                    bw.append(feeAmount);
-                    bw.append(',');
-
-                    bw.append((!Strings.isBlank(saleAmountARS)) ? saleAmountARS : "");
-                    bw.append(',');
-
-                    bw.append((!Strings.isBlank(saleAmountUSD))? saleAmountUSD : "");
-                    bw.append(',');
-
-                    bw.append((!Strings.isBlank(saleAmountBTC)) ? saleAmountBTC : "");
-                    bw.append(',');
+                    // bw.append(',');
 
                     bw.newLine();
                     bw.close();

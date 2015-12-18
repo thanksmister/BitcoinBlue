@@ -1,6 +1,5 @@
 package com.thanksmister.btcblue.ui;
 
-import android.support.v7.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,10 +7,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.internal.widget.ContentFrameLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.Html;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -56,10 +54,6 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     private final static int EDIT_ARS = 1;
     private final static int EDIT_USD = 2;
     private final static int EDIT_BTC = 3;
-    private final static int EDIT_SALE_ARS = 4;
-    private final static int EDIT_SALE_USD = 5;
-    private final static int EDIT_FEE = 6;
-    private final static int EDIT_COMMISSION = 7;
 
     @Inject
     DbManager dbManager;
@@ -73,27 +67,16 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     @InjectView(R.id.editARS) EditText editARS;
     @InjectView(R.id.editBTC) EditText editBTC;
     @InjectView(R.id.editUSD) EditText editUSD;
-    @InjectView(R.id.editFee) EditText editFee;
-    @InjectView(R.id.editSaleUSD) EditText editSaleUSD;
-    @InjectView(R.id.editSaleARS) EditText editSaleARS;
-    @InjectView(R.id.editCommission) EditText editCommission;
+    
     @InjectView(R.id.copyARS) ImageButton copyARS;
     @InjectView(R.id.copyUSD) ImageButton copyUSD;
     @InjectView(R.id.copyBTC) ImageButton copyBTC;
+    
     @InjectView(R.id.copyTotalARS) ImageButton copyTotalARS;
     @InjectView(R.id.copyTotalUSD) ImageButton copyTotalUSD;
     @InjectView(R.id.copyTotalBTC) ImageButton copyTotalBTC;
-    @InjectView(R.id.copySaleARS) ImageButton copySaleARScopySaleARS;
-    @InjectView(R.id.copySaleUSD) ImageButton copySaleUSD;
-    @InjectView(R.id.copyFee) ImageButton copyFee;
-    @InjectView(R.id.copyCommission) ImageButton copyCommission;
-
-    @OnClick(R.id.clearFees)
-    public void clearFeesClicked()
-    {
-        resetFeesAndCommission();
-    }
-
+    
+    
     @OnClick(R.id.clearExchange)
     public void clearExchangeClicked()
     {
@@ -126,43 +109,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
             setTextOnClipboard("BTC", copy);
         }
     }
-
-    @OnClick(R.id.copySaleARS)
-    public void copySaleArsClicked()
-    {
-        CharSequence copy = editBTC.getText();
-        if(!Strings.isBlank(copy)) {
-            setTextOnClipboard("Sale ARS", copy);
-        }
-    }
-
-    @OnClick(R.id.copySaleUSD)
-    public void copySaleUsdClicked()
-    {
-        CharSequence copy = editBTC.getText();
-        if(!Strings.isBlank(copy)) {
-            setTextOnClipboard("Sale USD", copy);
-        }
-    }
-
-    @OnClick(R.id.copyFee)
-    public void copyFeeClicked()
-    {
-        CharSequence copy = editFee.getText();
-        if(!Strings.isBlank(copy)) {
-            setTextOnClipboard("Fee", copy);
-        }
-    }
-
-    @OnClick(R.id.copyCommission)
-    public void copyCommissionClicked()
-    {
-        CharSequence copy = editCommission.getText();
-        if(!Strings.isBlank(copy)) {
-            setTextOnClipboard("Commission", copy);
-        }
-    }
-
+    
     @OnClick(R.id.copyTotalARS)
     public void copyTotalArsClicked()
     {
@@ -294,22 +241,6 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         editARS.setOnFocusChangeListener(this);
         editARS.addTextChangedListener(this);
         editARS.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(2)});
-        
-        editSaleARS.setOnFocusChangeListener(this);
-        editSaleARS.addTextChangedListener(this);
-        editSaleARS.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(2)});
-        
-        editSaleUSD.setOnFocusChangeListener(this);
-        editSaleUSD.addTextChangedListener(this);
-        editSaleUSD.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(2)});
-        
-        editFee.setOnFocusChangeListener(this);
-        editFee.addTextChangedListener(this);
-        editFee.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(8)});
-        
-        editCommission.setOnFocusChangeListener(this);
-        editCommission.addTextChangedListener(this);
-        editCommission.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(2)});
     }
   
     private void setupToolbar()
@@ -375,16 +306,6 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         calculateTotal();
     }
 
-    private void resetFeesAndCommission()
-    {
-        editSaleARS.setText("");
-        editSaleUSD.setText("");
-        editFee.setText("");
-        editCommission.setText("");
-        
-        calculateTotal();
-    }
-
     private void setTextOnClipboard(String title, CharSequence copy)
     {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -395,26 +316,9 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     
     private void calculateTotal()
     {
-        double saleValueARS = Doubles.convertToDouble(editSaleARS.getText().toString());
-        double saleValueUSD = Doubles.convertToDouble(editSaleUSD.getText().toString());
-        double feeValue = Doubles.convertToDouble(editFee.getText().toString());
-        double commissionValue = Doubles.convertToDouble(editCommission.getText().toString());
-
-        if((saleValueUSD > 0 && saleValueUSD != usdValue) || (saleValueARS > 0 && saleValueARS != arsValue) || commissionValue > 0 || feeValue > 0) {
-            
-            Calculations.CalculatedValue totalValues = Calculations.calculateTotalSales(saleValueARS, commissionValue, feeValue, bitcoinValue, arsValue, usdValue);
-            int negativeOrPositive = (saleValueUSD < usdValue)? R.string.sales_negative:R.string.sales_positive;
-
-            totalBTC.setText(Html.fromHtml(getString(negativeOrPositive, Conversions.formatBitcoinAmount(totalValues.btcSale), Conversions.formatBitcoinAmount(totalValues.diffBTC))));
-            totalARS.setText(Html.fromHtml(getString(negativeOrPositive, Conversions.formatCurrencyAmount(totalValues.arsSale), Conversions.formatCurrencyAmount(totalValues.diffARS))));
-            totalUSD.setText(Html.fromHtml(getString(negativeOrPositive, Conversions.formatCurrencyAmount(totalValues.usdSale), Conversions.formatCurrencyAmount(totalValues.diffUSD))));
-            
-        } else {
-            
-            totalBTC.setText(Conversions.formatBitcoinAmount(bitcoinValue));
-            totalARS.setText(Conversions.formatCurrencyAmount(arsValue));
-            totalUSD.setText(Conversions.formatCurrencyAmount(usdValue));
-        }
+        totalBTC.setText(Conversions.formatBitcoinAmount(bitcoinValue));
+        totalARS.setText(Conversions.formatCurrencyAmount(arsValue));
+        totalUSD.setText(Conversions.formatCurrencyAmount(usdValue));
     }
 
     @Override
@@ -429,18 +333,6 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
                 break;
             case R.id.editBTC:
                 whoHasFocus = EDIT_BTC;
-                break;
-            case R.id.editSaleARS:
-                whoHasFocus = EDIT_SALE_ARS;
-                break;
-            case R.id.editSaleUSD:
-                whoHasFocus = EDIT_SALE_USD;
-                break;
-            case R.id.editFee:
-                whoHasFocus = EDIT_FEE;
-                break;
-            case R.id.editCommission:
-                whoHasFocus = EDIT_COMMISSION;
                 break;
         }
     }
@@ -521,45 +413,6 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
                     }
                 }
                 break;
-            case EDIT_SALE_ARS:
-                
-                if (editSaleARS.getText().hashCode() == editable.hashCode()) {
-
-                    double ars = Doubles.convertToDouble(stringValue);
-                    
-                    double btc = Calculations.calculateBTC(ars, rateARS);
-
-                    double usd = Calculations.calculateUSDValue(rateUSD, btc);
-
-                    if(Strings.isBlank(stringValue)) {
-                        editSaleUSD.setText("");
-                    } else {
-                        editSaleUSD.setText(Conversions.formatCurrencyAmount(usd));
-                    }
-                }
-                break;
-
-            case EDIT_SALE_USD:
-                
-                if (editSaleUSD.getText().hashCode() == editable.hashCode()) {
-
-                    double usd = Doubles.convertToDouble(stringValue);
-                    
-                    double btc = Calculations.calculateBTC(usd, rateUSD);
-
-                    double ars = Calculations.calculateARSValue(rateARS, btc);
-
-                    if(Strings.isBlank(stringValue)) {
-                        editSaleARS.setText("");
-                    } else {
-                        editSaleARS.setText(Conversions.formatCurrencyAmount(ars));
-                    }
-                }
-                break;
-            
-            case EDIT_FEE:
-            case EDIT_COMMISSION:
-                break;
         }
         
         calculateTotal();
@@ -637,15 +490,8 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     {
         Timber.d("Generate Receipt");
         
-        String saleValueARS = editSaleARS.getText().toString();
-        String saleValueUSD = editSaleUSD.getText().toString();
-        String saleValueBTC = editSaleUSD.getText().toString();
-        String feeValue = editFee.getText().toString();
-        String commissionValue = editCommission.getText().toString();
-        
         final WriterService writerService = new WriterService();
-        Observable<File> observable = writerService.writeReceiptFileObservable(title, exchange, String.valueOf(bitcoinValue), String.valueOf(arsValue),
-                String.valueOf(usdValue), saleValueARS, saleValueUSD, saleValueBTC, commissionValue, feeValue);
+        Observable<File> observable = writerService.writeReceiptFileObservable(title, exchange, String.valueOf(bitcoinValue), String.valueOf(arsValue), String.valueOf(usdValue));
         observable.subscribe(new Action1<File>()
         {
             @Override

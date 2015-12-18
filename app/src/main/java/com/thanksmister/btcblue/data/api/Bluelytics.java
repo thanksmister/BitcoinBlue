@@ -16,15 +16,12 @@
 
 package com.thanksmister.btcblue.data.api;
 
-import com.thanksmister.btcblue.data.api.model.Bluelytic;
-
-import java.util.List;
-
+import retrofit.client.Response;
 import retrofit.http.GET;
 import rx.Observable;
 
 public interface Bluelytics
 {
-    @GET("/json/last_price")
-    Observable<List<Bluelytic>> lastPrice();
+    @GET("/v2/latest")
+    Observable<Response>  latestPrice();
 }
