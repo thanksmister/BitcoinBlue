@@ -47,6 +47,10 @@ You can also install the latest version from the Google Play store at:
 
 https://play.google.com/store/apps/details?id=com.thanksmister.btcblue
 
+Download the .apk directly and verify: 
+
+    $ openssl sha1 bitcoin-blue-v015.apk = 2efc4ad44f81f53b616bc936d17fd311fa96d6bc
+
 Licensing
 ========
 Copyright (c)  2015.  ThanksMister LLC
