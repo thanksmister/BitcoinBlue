@@ -17,6 +17,10 @@
 package com.thanksmister.btcblue;
 
 import android.app.Application;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -29,14 +33,15 @@ public class BaseApplication extends Application
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-            //ButterKnife.setDebug(BuildConfig.DEBUG);
-            //LeakCanary.install(this);
-            //refWatcher = LeakCanary.install(this);
-        } else {
-            //Crashlytics.start(this);
-            //Timber.plant(new CrashlyticsTree());
         }
 
+        // Force set the default locale to US for conversions
+        Locale.setDefault(Locale.US);
+        Resources res = getResources();
+        Configuration config = res.getConfiguration();
+        config.locale = Locale.US;
+        res.updateConfiguration(config, res.getDisplayMetrics());
+        
         Injector.init(this);
     }
 }
