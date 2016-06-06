@@ -47,7 +47,7 @@ You can also install the latest version from the Google Play store at:
 
 https://play.google.com/store/apps/details?id=com.thanksmister.btcblue
 
-Download the .apk directly and verify: 
+Download the .apk directly and verify (https://github.com/thanksmister/BitcoinBlue/blob/master/bitcoin-blue-v015.apk): 
 
     $ openssl sha1 bitcoin-blue-v015.apk = 2efc4ad44f81f53b616bc936d17fd311fa96d6bc
 
