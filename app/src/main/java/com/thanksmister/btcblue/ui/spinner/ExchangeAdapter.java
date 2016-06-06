@@ -81,8 +81,21 @@ public class ExchangeAdapter extends ArrayAdapter<Exchange>
             view.setTag(holder);
         }
 
-        Exchange exchange = values.get(position);
-        holder.displayName.setText(exchange.getDisplay_name());
+        // Fix for exchange being removed from BitcoinAverage list after 
+        // previously been available (Coinbase)
+        if(!values.isEmpty()) {
+            Exchange exchange = null;
+            try {
+                exchange = values.get(position);
+                holder.displayName.setText(exchange.getDisplay_name());
+            } catch (IndexOutOfBoundsException e) {
+               exchange = values.get(0);
+                holder.displayName.setText(exchange.getDisplay_name());
+            }
+        } else {
+            holder.displayName.setText(R.string.spinner_no_exchange_data);
+        }
+        
         return view;
     }
 

@@ -80,5 +80,6 @@
     <string name="title_sale_price">SALE PRICE</string>
     <string name="title_total">TOTAL</string>
     <string name="snack_retry">Retry</string>
+    <string name="spinner_no_exchange_data">No Exchange Data</string>
 
 </resources>
