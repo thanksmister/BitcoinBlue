@@ -14,6 +14,7 @@ import com.thanksmister.btcblue.utils.Dates;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,11 +42,9 @@ public class WriterService
             public void call(Subscriber<? super File> subscriber)
             {
                 File folder = new File(Environment.getExternalStorageDirectory() + "/BitcoinBlue");
-                if (!folder.exists()) {
-                    boolean var = folder.mkdir();
-                }
-
-                String timestamp = Dates.parseFileTimeStamp();
+                Date date = new Date();
+                String dateString = Dates.getLocalDateTime(date);
+                String timestamp = Dates.parseFileTimeStamp(date);
                 final String filename = (title.isEmpty()) ? timestamp : (title + "_" + timestamp) + ".csv";
                 File outFile = new File(folder, filename);
 
@@ -81,7 +80,7 @@ public class WriterService
                     bw.append(title);
                     bw.append(',');
 
-                    bw.append(timestamp);
+                    bw.append(dateString);
                     bw.append(',');
 
                     bw.append(exchange.getDisplay_name());

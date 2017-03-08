@@ -16,6 +16,7 @@
 
 package com.thanksmister.btcblue.utils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +37,7 @@ public class Dates
         long ago = System.currentTimeMillis();
     
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+            DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
             Date mDate = sdf.parse(dateString);
             ago = mDate.getTime();
         } catch (ParseException e) {
@@ -53,74 +54,26 @@ public class Dates
             return DateDistance.RECENT;
         }
     }
+
+    public static String getLocalDateTime()
+    {
+        String dateString;
+        DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
+        Date date = new Date();
+        dateString = (dateFormat.format(date.getTime()));
+        return dateString ;
+    }
+
+    public static String getLocalDateTime(Date date)
+    {
+        String dateString;
+        DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
+        dateString = (dateFormat.format(date.getTime()));
+        return dateString ;
+    }
     
-    public static String parseOrderLocalDateString(String dateTime)
+    public static String parseFileTimeStamp(Date date)
     {
-        String dateString;
-
-        // Date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy\nhh:mma");
-        try {
-            dateString = (dateFormat.format(ISO8601.toCalendar(dateTime).getTime()));
-        } catch (ParseException e) {
-            Date date = new Date();
-            dateString = (dateFormat.format(date.getTime()));
-        }
-        return dateString ;
+        return new SimpleDateFormat("MM_dd_yyyy_HH_mm").format(date);
     }
-
-    public static String getLocalDateMilitaryTime()
-    {
-        String dateTime = createISODate();
-        String dateString;
-        // Date
-        //yyyy-MM-dd kk:mm:ss
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-        try {
-            dateString = (dateFormat.format(ISO8601.toCalendar(dateTime).getTime()));
-        } catch (ParseException e) {
-            Date date = new Date();
-            dateString = (dateFormat.format(date.getTime()));
-        }
-
-        return dateString ;
-    }
-
-    public static String getLocalDateMilitaryTimeShort()
-    {
-        String dateTime = createISODate();
-        String dateString;
-        // Date
-        //yyyy-MM-dd kk:mm:ss
-        SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm");
-        try {
-            dateString = (dateFormat.format(ISO8601.toCalendar(dateTime).getTime()));
-        } catch (ParseException e) {
-            Date date = new Date();
-            dateString = (dateFormat.format(date.getTime()));
-        }
-
-        return dateString ;
-    }
-
-    public static String parseFileTimeStamp()
-    {
-        String dateTime = createISODate();
-        String dateString;
-
-        // Date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_dd_yyyy_kk_mm");
-        try {
-            dateString = (dateFormat.format(ISO8601.toCalendar(dateTime).getTime()));
-        } catch (ParseException e) {
-            dateString = null;
-        }
-        return dateString ;
-    }
-
-    public static String createISODate()
-    {
-        return  ISO8601.now();
-    }
-
 }

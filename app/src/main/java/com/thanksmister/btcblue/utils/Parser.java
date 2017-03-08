@@ -67,7 +67,7 @@ public class Parser
                     String last = "";
                     String source = "";
                     String display_name = "";
-                    String created_at = Dates.getLocalDateMilitaryTime();
+                    String created_at = Dates.getLocalDateTime();
 
                     if(obj.has("rates")) {
                         JSONObject rates = obj.getJSONObject("rates");
