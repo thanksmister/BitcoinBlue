@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2014. ThanksMister LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * <!--
+ *   ~ Copyright (c) 2017. ThanksMister LLC
+ *   ~
+ *   ~ Licensed under the Apache License, Version 2.0 (the "License");
+ *   ~ you may not use this file except in compliance with the License. 
+ *   ~ You may obtain a copy of the License at
+ *   ~
+ *   ~ http://www.apache.org/licenses/LICENSE-2.0
+ *   ~
+ *   ~ Unless required by applicable law or agreed to in writing, software distributed 
+ *   ~ under the License is distributed on an "AS IS" BASIS, 
+ *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ *   ~ See the License for the specific language governing permissions and 
+ *   ~ limitations under the License.
+ *   -->
  */
 
 package com.thanksmister.btcblue.ui.spinner;
@@ -24,17 +26,17 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.thanksmister.btcblue.R;
-import com.thanksmister.btcblue.data.api.model.Exchange;
+import com.thanksmister.btcblue.data.api.model.DisplayExchange;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ExchangeAdapter extends ArrayAdapter<Exchange>
+public class ExchangeAdapter extends ArrayAdapter<DisplayExchange>
 {
     private LayoutInflater inflater;
-    private List<Exchange> values;
+    private List<DisplayExchange> values;
 
     public ExchangeAdapter(Context context, int textViewResourceId)
     {
@@ -42,7 +44,7 @@ public class ExchangeAdapter extends ArrayAdapter<Exchange>
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     
-    public void setData(List<Exchange> values)
+    public void setData(List<DisplayExchange> values)
     {
         this.values = values;
         notifyDataSetInvalidated();
@@ -56,7 +58,7 @@ public class ExchangeAdapter extends ArrayAdapter<Exchange>
         return values.size();
     }
 
-    public Exchange getItem(int position)
+    public DisplayExchange getItem(int position)
     {
         if(values == null)
             return null;
@@ -84,13 +86,13 @@ public class ExchangeAdapter extends ArrayAdapter<Exchange>
         // Fix for exchange being removed from BitcoinAverage list after 
         // previously been available (Coinbase)
         if(!values.isEmpty()) {
-            Exchange exchange = null;
+            DisplayExchange exchange = null;
             try {
                 exchange = values.get(position);
-                holder.displayName.setText(exchange.getDisplay_name());
+                holder.displayName.setText(exchange.getDisplayName());
             } catch (IndexOutOfBoundsException e) {
                exchange = values.get(0);
-                holder.displayName.setText(exchange.getDisplay_name());
+                holder.displayName.setText(exchange.getDisplayName());
             }
         } else {
             holder.displayName.setText(R.string.spinner_no_exchange_data);
@@ -111,8 +113,8 @@ public class ExchangeAdapter extends ArrayAdapter<Exchange>
             view.setTag(holder);
         }
 
-        Exchange exchange = values.get(position);
-        holder.displayName.setText(exchange.getDisplay_name());
+        DisplayExchange exchange = values.get(position);
+        holder.displayName.setText(exchange.getDisplayName());
         return view;
     }
 

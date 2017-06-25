@@ -1,3 +1,21 @@
+/*
+ * <!--
+ *   ~ Copyright (c) 2017. ThanksMister LLC
+ *   ~
+ *   ~ Licensed under the Apache License, Version 2.0 (the "License");
+ *   ~ you may not use this file except in compliance with the License. 
+ *   ~ You may obtain a copy of the License at
+ *   ~
+ *   ~ http://www.apache.org/licenses/LICENSE-2.0
+ *   ~
+ *   ~ Unless required by applicable law or agreed to in writing, software distributed 
+ *   ~ under the License is distributed on an "AS IS" BASIS, 
+ *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ *   ~ See the License for the specific language governing permissions and 
+ *   ~ limitations under the License.
+ *   -->
+ */
+
 package com.thanksmister.btcblue.ui;
 
 import android.content.Intent;
@@ -13,9 +31,9 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.squareup.sqlbrite.SqlBrite;
 import com.thanksmister.btcblue.R;
 import com.thanksmister.btcblue.data.ExchangeService;
+import com.thanksmister.btcblue.data.api.model.DisplayExchange;
 import com.thanksmister.btcblue.data.api.model.Exchange;
 import com.thanksmister.btcblue.db.DbManager;
 import com.thanksmister.btcblue.ui.spinner.ExchangeAdapter;
@@ -23,6 +41,7 @@ import com.thanksmister.btcblue.utils.Calculations;
 import com.thanksmister.btcblue.utils.Conversions;
 import com.thanksmister.btcblue.utils.Dates;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,20 +53,20 @@ import rx.Subscription;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.subscriptions.Subscriptions;
+import timber.log.Timber;
 
 import static rx.android.app.AppObservable.bindActivity;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener
-{
+public class MainActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, AppBarLayout.OnOffsetChangedListener {
     @Inject
     ExchangeService exchangeService;
 
     @Inject
     DbManager dbManager;
-    
+
     @InjectView(R.id.dataFrom)
     TextView dataFrom;
-    
+
     @InjectView(R.id.date)
     TextView date;
 
@@ -104,28 +123,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @InjectView(R.id.exchangeSpinner)
     Spinner exchangeSpinner;
-    
+
     @InjectView(R.id.fab)
     FloatingActionButton fab;
 
-    @InjectView(android.R.id.progress)
-    View progress;
-
     @InjectView(R.id.content)
     View content;
-    
+
     Handler handler;
     ExchangeAdapter adapter;
 
-    private Observable<List<Exchange>> exchangeObservable;
-    private Observable<List<Exchange>> exchangeUpdateObservable;
+    private Observable<Exchange> exchangeObservable;
+    private Observable<Exchange> exchangeUpdateObservable;
 
     Subscription subscription = Subscriptions.empty();
     Subscription updateSubscription = Subscriptions.empty();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -134,42 +149,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeColors(getResources().getColor(R.color.blue));
-
         handler = new Handler();
 
         // setup adapter
         adapter = new ExchangeAdapter(this, R.layout.spinner_dropdown);
-        
-        // database data
-        exchangeObservable = bindActivity(this, dbManager.exchangeQuery());
-
-        // update data
-        exchangeUpdateObservable = bindActivity(this, exchangeService.getExchangesObservable());
-        
         setupSpinner();
         setupFab();
         setFromText();
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-
         appBarLayout.addOnOffsetChangedListener(this);
-
         onRefreshStart();
-
         subscribeData();
-
         updateData();
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
-
         appBarLayout.removeOnOffsetChangedListener(this);
         subscription.unsubscribe();
         updateSubscription.unsubscribe();
@@ -177,14 +177,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void onRefresh()
-    {
+    public void onRefresh() {
         updateData();
     }
 
     @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int i)
-    {
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
         if (i == 0) {
             swipeLayout.setEnabled(true);
         } else {
@@ -192,163 +190,126 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    private void onRefreshStart()
-    {
+    private void onRefreshStart() {
         handler.postDelayed(refreshRunnable, 1000);
     }
 
-    private void onRefreshStop()
-    {
+    private void onRefreshStop() {
         handler.removeCallbacks(refreshRunnable);
-        
         swipeLayout.setRefreshing(false);
     }
-    
-    private void onProgress(boolean show)
-    {
-        progress.setVisibility((show)? View.VISIBLE: View.GONE);
-        content.setVisibility((show) ? View.GONE : View.VISIBLE);
+
+    private void showContent(boolean show) {
+        if(content != null) {
+            content.setVisibility((show) ? View.VISIBLE : View.GONE);  
+        }
     }
-    
-    private Runnable refreshRunnable = new Runnable()
-    {
+
+    private Runnable refreshRunnable = new Runnable() {
         @Override
-        public void run()
-        {
+        public void run() {
             swipeLayout.setRefreshing(true);
         }
     };
-    
-    private void setupFab()
-    {
+
+    private void setupFab() {
         fab.setOnClickListener(this);
     }
 
-    private void setupSpinner()
-    {
-        exchangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+    private void setupSpinner() {
+        List<DisplayExchange> exchanges = generateDisplayExchanges();
+        adapter.setData(exchanges);
+        exchangeSpinner.setAdapter(adapter);
+        exchangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                Exchange exchange = (Exchange) adapterView.getAdapter().getItem(i);
-                exchangeService.setSelectedExchange(exchange.getDisplay_name());
-                setExchange(exchange);
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                DisplayExchange exchange = (DisplayExchange) adapterView.getAdapter().getItem(i);
+                exchangeService.setSelectedExchange(exchange.getExchangeName());
+                onResume();
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView)
-            {
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
     }
-    
+
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
         if (view.getId() == R.id.fab) {
             Intent intent = CalculatorActivity.createStartIntent(MainActivity.this);
             startActivity(intent);
         }
     }
 
-    public void subscribeData()
-    {
-        subscription = exchangeObservable.subscribe(new Action1<List<Exchange>>()
-        {
+    public void subscribeData() {
+        // database data
+        exchangeObservable = bindActivity(this, dbManager.exchangeQuery(exchangeService.getSelectedExchangeName()));
+        subscription = exchangeObservable.subscribe(new Action1<Exchange>() {
             @Override
-            public void call(List<Exchange> exchanges)
-            {
-                if(!exchanges.isEmpty()) {
-                    onProgress(false);
-                    updateSelectedExchange(exchanges);
-                } else {
-                    onProgress(true);
-                }
+            public void call(Exchange exchange) {
+                if (exchange != null) {
+                    updateSelectedExchange(exchange);
+                } 
             }
-        }, new Action1<Throwable>()
-        {
+        }, new Action1<Throwable>() {
             @Override
-            public void call(Throwable throwable)
-            {
-                onProgress(false);
+            public void call(Throwable throwable) {
                 reportError(throwable);
             }
         });
     }
 
-    public void updateData()
-    {
-        updateSubscription = exchangeUpdateObservable.subscribe(new Action1<List<Exchange>>()
-        {
+    public void updateData() {
+        // update data
+        exchangeUpdateObservable = bindActivity(this, exchangeService.getExchangeObservable(exchangeService.getSelectedExchangeName()));
+        updateSubscription = exchangeUpdateObservable.subscribe(new Action1<Exchange>() {
             @Override
-            public void call(List<Exchange> exchanges)
-            {
+            public void call(Exchange exchange) {
                 onRefreshStop();
-
-                dbManager.updateExchanges(exchanges);
-               
+                dbManager.updateExchange(exchange);
             }
-        }, new Action1<Throwable>()
-        {
+        }, new Action1<Throwable>() {
             @Override
-            public void call(Throwable throwable)
-            {
+            public void call(Throwable throwable) {
                 onRefreshStop();
-
-                handleError(throwable, getString(R.string.snack_retry), new Action0()
-                {
+                handleError(throwable, getString(R.string.snack_retry), new Action0() {
                     @Override
-                    public void call()
-                    {
+                    public void call() {
                         updateData();
                     }
                 });
             }
         });
     }
-    
-    private void updateSelectedExchange(final List<Exchange> exchanges)
-    {
-        String name = exchangeService.getSelectedExchangeName();
-        
+
+    private void updateSelectedExchange(final Exchange exchange) {
         int index = 0;
-        for (Exchange ex:exchanges) {
-            if(ex.getDisplay_name().equals(name)) {
+        List<DisplayExchange> exchanges = generateDisplayExchanges();
+        for (DisplayExchange ex : exchanges) {
+            if (ex.getExchangeName().equals(exchange.getSource())) {
                 break;
             }
-            index ++;
+            index++;
         }
-        
-        adapter.setData(exchanges);
-        setExchangeSpinner(adapter, index);
-
-        Exchange selectedExchange = exchanges.get(index);
-        setExchange(selectedExchange);
-        
+        exchangeSpinner.setSelection(index);
+        setExchange(exchange);
     }
 
-    public void setExchangeSpinner(ExchangeAdapter adapter, int currentSelectedPosition)
-    {
-        exchangeSpinner.setAdapter(adapter);
-        exchangeSpinner.setSelection(currentSelectedPosition);
-    }
-    
-    private void setExchange(Exchange exchange)
-    {
-        if(exchange == null) return;
-
+    private void setExchange(Exchange exchange) {
+        if (exchange == null) return;
+        Timber.e("Exchange date: " + exchange.getCreated_at());
+        Timber.e("Exchange source: " + exchange.getSource());
+        Timber.e("Exchange ask: " + exchange.getAsk());
+        showContent(true);
         setMarketData(exchange, MarketViewType.ARS_USDB);
         setMarketData(exchange, MarketViewType.ARS_BTC);
         setMarketData(exchange, MarketViewType.USD_BTC);
-
         setDate(exchange);
     }
-    
-    private void setDate(Exchange exchange)
-    {
-        Dates.DateDistance dateDistance = Dates.getTimeInDistance(exchange.getCreated_at());
 
+    private void setDate(Exchange exchange) {
+        Dates.DateDistance dateDistance = Dates.getTimeInDistance(exchange.getCreated_at());
         switch (dateDistance) {
             case RECENT:
                 date.setText(Html.fromHtml(getString(R.string.date_updated_text_recent, exchange.getCreated_at())));
@@ -361,23 +322,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
         }
     }
-    
-    private void setFromText()
-    {
+
+    private void setFromText() {
         dataFrom.setText(Html.fromHtml(getString(R.string.data_provided_by)));
         dataFrom.setMovementMethod(LinkMovementMethod.getInstance());
     }
-    
-    private enum MarketViewType
-    {
+
+    private enum MarketViewType {
         USD_BTC,
         ARS_BTC,
         ARS_USDB,
         ARS_USD
     }
 
-    public void setMarketData(Exchange exchange, MarketViewType type)
-    {
+    public void setMarketData(Exchange exchange, MarketViewType type) {
         String ask = "";
         String bid = "";
         String avg = "";
@@ -420,5 +378,51 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 officialUSD.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    /**
+     * BitcoinAverage removed the ability to get exchanges with a free account.
+     * This is breakable if one of the exchanges changes names or is removed.
+     * @return
+     */
+    private List<DisplayExchange> generateDisplayExchanges() {
+        List<DisplayExchange> exchanges = new ArrayList<>();
+        DisplayExchange exchange = new DisplayExchange();
+        
+        exchange.setDisplayName("Bitstamp");
+        exchange.setExchangeName("bitstamp");
+        exchanges.add(exchange);
+
+        exchange = new DisplayExchange();
+        exchange.setDisplayName("Bitfinex");
+        exchange.setExchangeName("bitfinex");
+        exchanges.add(exchange);
+
+        exchange = new DisplayExchange();
+        exchange.setDisplayName("Bitsquare");
+        exchange.setExchangeName("bitsquare");
+        exchanges.add(exchange);
+
+        exchange = new DisplayExchange();
+        exchange.setDisplayName("BTC-e");
+        exchange.setExchangeName("btce");
+        exchanges.add(exchange);
+
+        exchange = new DisplayExchange();
+        exchange.setDisplayName("GDAX");
+        exchange.setExchangeName("gdax");
+        exchanges.add(exchange);
+
+        exchange = new DisplayExchange();
+        exchange.setDisplayName("Gemini");
+        exchange.setExchangeName("gemini");
+        exchanges.add(exchange);
+        
+        exchange = new DisplayExchange();
+        exchange.setDisplayName("Kraken");
+        exchange.setExchangeName("kraken");
+        exchanges.add(exchange);
+        
+        return exchanges;
     }
 }

@@ -16,16 +16,12 @@
  *   -->
  */
 
-package com.thanksmister.btcblue.data.api;
+package com.thanksmister.btcblue;
 
-import com.thanksmister.btcblue.data.api.model.Coinbase;
-
-import retrofit.http.GET;
-import retrofit.http.Path;
-import rx.Observable;
-
-public interface CoinbaseMarket
-{
-    @GET("/api/v1/prices/{type}")
-    Observable<Coinbase> coinbase(@Path("type") String type);
+/**
+ * Store the BitcoinAverage key and secret, should be replaced bo your own key and secret.
+ */
+public class Constants {
+    public static String PUBLIC_KEY = "your_bitcoin_average_key";
+    public static String SECRET = "your_bitcoin_average_secret";
 }

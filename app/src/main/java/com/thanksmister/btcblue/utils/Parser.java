@@ -1,24 +1,25 @@
 /*
- * Copyright (c) 2014. ThanksMister LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * <!--
+ *   ~ Copyright (c) 2017. ThanksMister LLC
+ *   ~
+ *   ~ Licensed under the Apache License, Version 2.0 (the "License");
+ *   ~ you may not use this file except in compliance with the License. 
+ *   ~ You may obtain a copy of the License at
+ *   ~
+ *   ~ http://www.apache.org/licenses/LICENSE-2.0
+ *   ~
+ *   ~ Unless required by applicable law or agreed to in writing, software distributed 
+ *   ~ under the License is distributed on an "AS IS" BASIS, 
+ *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ *   ~ See the License for the specific language governing permissions and 
+ *   ~ limitations under the License.
+ *   -->
  */
 
 package com.thanksmister.btcblue.utils;
 
 import com.thanksmister.btcblue.data.api.model.Bluelytic;
 import com.thanksmister.btcblue.data.api.model.Exchange;
-import com.thanksmister.btcblue.data.api.model.ExchangeData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,91 +28,54 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Parser
-{
-    public static ExchangeData parseExchanges(String response)
-    {
+public class Parser {
+  
+    public static Exchange parseExchange(String response) {
         JSONObject jsonObject;
-        
+        String created_at = Dates.getLocalDateTime();
+        Exchange exchange = new Exchange("", "", "", "", "", created_at);
         try {
             jsonObject = new JSONObject(response);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-        
-        ExchangeData exchangeData = new ExchangeData();
-        ArrayList<Exchange> exchanges = new ArrayList<Exchange>();
-        //ArrayList<String> keyList = new ArrayList<String>();
-
-        if(jsonObject.has("timestamp")) {
-            try {
-                exchangeData.setTimestamp(jsonObject.getString("timestamp"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Iterator<?> keys = jsonObject.keys();
-        while( keys.hasNext() ){
-            
-            String key = (String) keys.next();
-            //keyList.add(key);
-            
-            try {
-                if( jsonObject.get(key) instanceof JSONObject) {
-                    JSONObject obj = (JSONObject) jsonObject.get(key);
-                    
-                    String ask = "";
-                    String bid = "";
-                    String last = "";
-                    String source = "";
-                    String display_name = "";
-                    String created_at = Dates.getLocalDateTime();
-
-                    if(obj.has("rates")) {
-                        JSONObject rates = obj.getJSONObject("rates");
-                        if(rates.has("ask")) ask = (rates.getString("ask"));
-                        if(rates.has("bid")) bid = (rates.getString("bid"));
-                        if(rates.has("last")) last =(rates.getString("last"));
-                    }
-
-                    if(obj.has("source")) source = (obj.getString("source"));
-                    if(obj.has("display_name")) display_name = (obj.getString("display_name"));
-                   
-                    Exchange exchange = new Exchange(display_name, ask, bid, last, source, created_at);
-                    exchanges.add(exchange);
+            String ask = "";
+            String bid = "";
+            String last = "";
+            String source = "";
+            String display_name = "";
+            if (jsonObject.has("symbols")) {
+                JSONObject symbols = jsonObject.getJSONObject("symbols");
+                if(symbols.has("BTCUSD")) {
+                    JSONObject BTCUSD = symbols.getJSONObject("BTCUSD");
+                    if (BTCUSD.has("ask")) ask = (BTCUSD.getString("ask"));
+                    if (BTCUSD.has("bid")) bid = (BTCUSD.getString("bid"));
+                    if (BTCUSD.has("last")) last = (BTCUSD.getString("last"));
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+
+            if (jsonObject.has("name")) source = (jsonObject.getString("name"));
+            if (jsonObject.has("display_name")) display_name = (jsonObject.getString("display_name"));
+            exchange = new Exchange(display_name, ask, bid, last, source, created_at);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        exchangeData.setExchanges(exchanges);
-
-        return exchangeData;
+        return exchange;
     }
-
-    public static List<Bluelytic> parseBluelytic(String response)
-    {
+    
+    public static List<Bluelytic> parseBluelytic(String response) {
         JSONObject jsonObject;
-        String last_update;
         try {
             jsonObject = new JSONObject(response);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
-        
+
         ArrayList<Bluelytic> items = new ArrayList<>();
-        //ArrayList<String> keyList = new ArrayList<String>();
-
         Iterator<?> keys = jsonObject.keys();
-        while( keys.hasNext() ){
-
+        while (keys.hasNext()) {
             String key = (String) keys.next();
             try {
-                if( jsonObject.get(key) instanceof JSONObject) {
+                if (jsonObject.get(key) instanceof JSONObject) {
                     JSONObject obj = (JSONObject) jsonObject.get(key);
                     Bluelytic bluelytic = new Bluelytic();
                     bluelytic.source = key;

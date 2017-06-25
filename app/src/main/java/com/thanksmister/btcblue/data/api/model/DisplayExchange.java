@@ -16,16 +16,29 @@
  *   -->
  */
 
-package com.thanksmister.btcblue.data.api;
+package com.thanksmister.btcblue.data.api.model;
 
-import com.thanksmister.btcblue.data.api.model.Coinbase;
+/**
+ * For display
+ */
+public class DisplayExchange {
+    
+    private String displayName;
+    private String exchangeName;
+    
+    public String getDisplayName() {
+        return displayName;
+    }
 
-import retrofit.http.GET;
-import retrofit.http.Path;
-import rx.Observable;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-public interface CoinbaseMarket
-{
-    @GET("/api/v1/prices/{type}")
-    Observable<Coinbase> coinbase(@Path("type") String type);
+    public String getExchangeName() {
+        return exchangeName;
+    }
+
+    public void setExchangeName(String exchangeName) {
+        this.exchangeName = exchangeName;
+    }
 }
