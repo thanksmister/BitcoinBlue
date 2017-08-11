@@ -200,8 +200,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void showContent(boolean show) {
-        if(content != null) {
-            content.setVisibility((show) ? View.VISIBLE : View.GONE);  
+        if (content != null) {
+            content.setVisibility((show) ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -250,7 +250,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public void call(Exchange exchange) {
                 if (exchange != null) {
                     updateSelectedExchange(exchange);
-                } 
+                }
             }
         }, new Action1<Throwable>() {
             @Override
@@ -383,12 +383,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     /**
      * BitcoinAverage removed the ability to get exchanges with a free account.
      * This is breakable if one of the exchanges changes names or is removed.
+     *
      * @return
      */
     private List<DisplayExchange> generateDisplayExchanges() {
         List<DisplayExchange> exchanges = new ArrayList<>();
         DisplayExchange exchange = new DisplayExchange();
-        
+
         exchange.setDisplayName("Bitstamp");
         exchange.setExchangeName("bitstamp");
         exchanges.add(exchange);
@@ -417,12 +418,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         exchange.setDisplayName("Gemini");
         exchange.setExchangeName("gemini");
         exchanges.add(exchange);
-        
+
         exchange = new DisplayExchange();
         exchange.setDisplayName("Kraken");
         exchange.setExchangeName("kraken");
         exchanges.add(exchange);
-        
+
         return exchanges;
     }
 }

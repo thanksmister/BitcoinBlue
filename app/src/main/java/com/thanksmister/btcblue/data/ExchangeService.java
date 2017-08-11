@@ -47,33 +47,30 @@ import rx.functions.Func1;
 import timber.log.Timber;
 
 @Singleton
-public class ExchangeService
-{
+public class ExchangeService {
     public static final String PREFS_DOLLAR_BLUE_EXPIRE_TIME = "pref_dollar_blue_expire";
     public static final String PREFS_EXCHANGE_EXPIRE_TIME = "pref_exchange_expire";
     public static final String PREFS_SELECTED_EXCHANGE = "selected_exchange_source";
 
     public static final int CHECK_EXCHANGE_DATA = 2 * 60 * 1000;// 5 minutes
     public static final int CHECK_BLUE_DOLLAR_DATA = 60 * 60 * 1000;// 1 HOUR
-    
+
     public static final String USD = "USD";
-    
+
     private final BitcoinAverage bitcoinAverage;
     private final Bluelytics blueLytics;
     private final SharedPreferences sharedPreferences;
     private List<Bluelytic> bluelyticsList;
-    
+
     @Inject
-    public ExchangeService(SharedPreferences sharedPreferences, BitcoinAverage bitcoinAverage, Bluelytics blueLytics)
-    {
+    public ExchangeService(SharedPreferences sharedPreferences, BitcoinAverage bitcoinAverage, Bluelytics blueLytics) {
         this.bitcoinAverage = bitcoinAverage;
         this.blueLytics = blueLytics;
         this.sharedPreferences = sharedPreferences;
         this.bluelyticsList = new ArrayList<>();
     }
-   
-    public void setSelectedExchange(String name)
-    {
+
+    public void setSelectedExchange(String name) {
         StringPreference preference = new StringPreference(sharedPreferences, PREFS_SELECTED_EXCHANGE, "bitstamp");
         preference.set(name);
     }
@@ -81,28 +78,24 @@ public class ExchangeService
     public String getSelectedExchangeName() {
         StringPreference preference = new StringPreference(sharedPreferences, PREFS_SELECTED_EXCHANGE, "bitstamp");
         Timber.d("Selected Name: " + preference.get());
-        if(preference.get().equals("")) return "bitstamp";
+        if (preference.get().equals("")) return "bitstamp";
         return preference.get().toLowerCase();
     }
 
-    private Observable<Exchange> getBluelyticsSubscription(final Exchange exchange)
-    {
+    private Observable<Exchange> getBluelyticsSubscription(final Exchange exchange) {
         return blueLytics.latestPrice()
                 .map(new ResponseToBluelytics())
-                .flatMap(new Func1<List<Bluelytic>, Observable<Exchange>>()
-                {
+                .flatMap(new Func1<List<Bluelytic>, Observable<Exchange>>() {
                     @Override
-                    public Observable<Exchange> call(List<Bluelytic> bluelytics)
-                    {
+                    public Observable<Exchange> call(List<Bluelytic> bluelytics) {
                         bluelyticsList = bluelytics;
                         setDollarBlueExpireTime();
                         return Observable.just(setBlueDollarValues(bluelytics, exchange));
                     }
                 });
     }
-    
-    private Exchange setBlueDollarValues(List<Bluelytic> bluelytics, Exchange exchange)
-    {
+
+    private Exchange setBlueDollarValues(List<Bluelytic> bluelytics, Exchange exchange) {
         double official_value_sell = 0;
         double official_value_buy = 0;
         double blue_value_sell = 0;
@@ -123,8 +116,8 @@ public class ExchangeService
         exchange.setBlue_bid(String.valueOf(blue_value_buy));
         exchange.setOfficial_ask(String.valueOf(official_value_sell));
         exchange.setOfficial_bid(String.valueOf(official_value_buy));
-        
-        return  exchange;
+
+        return exchange;
     }
 
     public Observable<String> getServerTime() {
@@ -176,16 +169,14 @@ public class ExchangeService
                 });
     }
 
-    private class ExchangeNameComparator implements Comparator<Exchange>
-    {
+    private class ExchangeNameComparator implements Comparator<Exchange> {
         @Override
         public int compare(Exchange o1, Exchange o2) {
             return o1.getDisplay_name().toLowerCase().compareTo(o2.getDisplay_name().toLowerCase());
         }
     }
 
-    private void setDollarBlueExpireTime()
-    {
+    private void setDollarBlueExpireTime() {
         synchronized (this) {
             long expire = System.currentTimeMillis() + CHECK_BLUE_DOLLAR_DATA; // 1 hours
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -194,8 +185,7 @@ public class ExchangeService
         }
     }
 
-    private void setExchangeExpireTime()
-    {
+    private void setExchangeExpireTime() {
         synchronized (this) {
             long expire = System.currentTimeMillis() + CHECK_EXCHANGE_DATA; // 1 hours
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -203,20 +193,18 @@ public class ExchangeService
             editor.apply();
         }
     }
-    
-    private boolean needToRefreshDollarBlue()
-    {
-        if(bluelyticsList == null || bluelyticsList.isEmpty()) 
+
+    private boolean needToRefreshDollarBlue() {
+        if (bluelyticsList == null || bluelyticsList.isEmpty())
             return true;
-        
+
         synchronized (this) {
             long expiresAt = sharedPreferences.getLong(PREFS_DOLLAR_BLUE_EXPIRE_TIME, -1);
             return System.currentTimeMillis() >= expiresAt;
         }
     }
 
-    private boolean needToRefreshExchanges()
-    {
+    private boolean needToRefreshExchanges() {
         synchronized (this) {
             long expiresAt = sharedPreferences.getLong(PREFS_EXCHANGE_EXPIRE_TIME, -1);
             return System.currentTimeMillis() >= expiresAt;

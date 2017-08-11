@@ -22,22 +22,20 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import timber.log.Timber;
 
-public class Dates
-{
-    public static enum DateDistance
-    {
+public class Dates {
+    public static enum DateDistance {
         RECENT,
         NOT_SO_MUCH,
         LONG_GONE
     }
 
-    public static DateDistance getTimeInDistance(String dateString)
-    {
+    public static DateDistance getTimeInDistance(String dateString) {
         long ago = System.currentTimeMillis();
-    
+
         try {
             DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
             Date mDate = sdf.parse(dateString);
@@ -48,7 +46,7 @@ public class Dates
 
         long current = System.currentTimeMillis();
 
-        if((current - ago) > 900000 ) { // 5 minutes
+        if ((current - ago) > 900000) { // 5 minutes
             return DateDistance.LONG_GONE;
         } else if ((current - ago) > 300000) { // 15 minutes
             return DateDistance.NOT_SO_MUCH;
@@ -57,25 +55,22 @@ public class Dates
         }
     }
 
-    public static String getLocalDateTime()
-    {
+    public static String getLocalDateTime() {
         String dateString;
         DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
         Date date = new Date();
         dateString = (dateFormat.format(date.getTime()));
-        return dateString ;
+        return dateString;
     }
 
-    public static String getLocalDateTime(Date date)
-    {
+    public static String getLocalDateTime(Date date) {
         String dateString;
         DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
         dateString = (dateFormat.format(date.getTime()));
-        return dateString ;
+        return dateString;
     }
-    
-    public static String parseFileTimeStamp(Date date)
-    {
-        return new SimpleDateFormat("MM_dd_yyyy_HH_mm").format(date);
+
+    public static String parseFileTimeStamp(Date date) {
+        return new SimpleDateFormat("MM_dd_yyyy_HH_mm", Locale.getDefault()).format(date);
     }
 }

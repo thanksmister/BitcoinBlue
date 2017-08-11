@@ -30,12 +30,10 @@ import dagger.Provides;
         complete = false,
         library = true
 )
-public final class DomainModule
-{
+public final class DomainModule {
     @Provides
     @Singleton
-    Gson provideGson()
-    {
+    Gson provideGson() {
         return new GsonBuilder().create();
     }
 }

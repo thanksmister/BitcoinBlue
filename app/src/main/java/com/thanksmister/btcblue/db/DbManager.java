@@ -53,7 +53,7 @@ public class DbManager {
         return db.createQuery(ExchangeItem.TABLE, ExchangeItem.QUERY_ITEM_SOURCE, source)
                 .map(ExchangeItem.MAP_SINGLE);
     }
-    
+
     public void updateExchange(final Exchange exchange) {
         db.beginTransaction();
         Cursor cursor = db.query(ExchangeItem.QUERY_ITEM_SOURCE, exchange.getSource());

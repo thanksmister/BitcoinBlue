@@ -28,18 +28,15 @@ import dagger.Provides;
         library = true
 )
 
-public class ApplicationModule
-{
+public class ApplicationModule {
     private final BaseApplication app;
 
-    public ApplicationModule(BaseApplication app) 
-    {
+    public ApplicationModule(BaseApplication app) {
         this.app = app;
     }
-    
+
     @Provides
-    BaseApplication provideApplication() 
-    {
+    BaseApplication provideApplication() {
         return app;
     }
 }

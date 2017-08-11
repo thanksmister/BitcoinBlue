@@ -18,15 +18,12 @@
 
 package com.thanksmister.btcblue.utils;
 
-public final class Doubles
-{
-    private Doubles()
-    {
+public final class Doubles {
+    private Doubles() {
         // No instances.
     }
 
-    public static double valueOrDefault (String value, double defaultValue)
-    {
+    public static double valueOrDefault(String value, double defaultValue) {
         if (Strings.isBlank(value))
             return defaultValue;
 
@@ -39,8 +36,7 @@ public final class Doubles
         return defaultValue;
     }
 
-    public static double convertToDouble (String value)
-    {
+    public static double convertToDouble(String value) {
         if (value == null || Strings.isBlank(value) || value.equals(".")) return 0;
 
         try {

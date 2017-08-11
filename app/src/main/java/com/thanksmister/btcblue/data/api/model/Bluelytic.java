@@ -18,8 +18,7 @@
 
 package com.thanksmister.btcblue.data.api.model;
 
-public class Bluelytic
-{
+public class Bluelytic {
     public Long _id;
     public String value_avg;
     public String value_sell;

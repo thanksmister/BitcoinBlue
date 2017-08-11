@@ -35,11 +35,11 @@ public final class Db {
     public static boolean getBoolean(Cursor cursor, String columnName) {
         return getInt(cursor, columnName) == BOOLEAN_TRUE;
     }
-    
+
     public static double getDouble(Cursor cursor, String columnName) {
         return cursor.getDouble(cursor.getColumnIndexOrThrow(columnName));
     }
-    
+
     public static long getLong(Cursor cursor, String columnName) {
         return cursor.getLong(cursor.getColumnIndexOrThrow(columnName));
     }

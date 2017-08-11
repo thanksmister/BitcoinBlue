@@ -23,8 +23,7 @@ import com.thanksmister.btcblue.data.api.model.Bitstamp;
 import retrofit.http.GET;
 import rx.Observable;
 
-public interface BitstampExchange
-{
+public interface BitstampExchange {
     @GET("/api/ticker/")
     Observable<Bitstamp> ticker();
     //Bitstamp ticker();

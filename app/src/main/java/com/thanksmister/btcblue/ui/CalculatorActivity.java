@@ -18,12 +18,17 @@
 
 package com.thanksmister.btcblue.ui;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +45,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.thanksmister.btcblue.BuildConfig;
 import com.thanksmister.btcblue.R;
 import com.thanksmister.btcblue.data.ExchangeService;
 import com.thanksmister.btcblue.data.WriterService;
@@ -59,16 +65,17 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 import static rx.android.app.AppObservable.bindActivity;
 
-public class CalculatorActivity extends BaseActivity implements View.OnFocusChangeListener, TextWatcher
-{
+public class CalculatorActivity extends BaseActivity implements View.OnFocusChangeListener, TextWatcher {
     private final static double DEFAULT_BTC_VALUE = 1;
-    
+
     private final static int EDIT_ARS = 1;
     private final static int EDIT_USD = 2;
     private final static int EDIT_BTC = 3;
@@ -78,79 +85,84 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
 
     @Inject
     ExchangeService exchangeService;
-    
-    @InjectView(R.id.totalARS) TextView totalARS;
-    @InjectView(R.id.totalUSD) TextView totalUSD;
-    @InjectView(R.id.totalBTC) TextView totalBTC;
-    @InjectView(R.id.editARS) EditText editARS;
-    @InjectView(R.id.editBTC) EditText editBTC;
-    @InjectView(R.id.editUSD) EditText editUSD;
-    
-    @InjectView(R.id.copyARS) ImageButton copyARS;
-    @InjectView(R.id.copyUSD) ImageButton copyUSD;
-    @InjectView(R.id.copyBTC) ImageButton copyBTC;
-    
-    @InjectView(R.id.copyTotalARS) ImageButton copyTotalARS;
-    @InjectView(R.id.copyTotalUSD) ImageButton copyTotalUSD;
-    @InjectView(R.id.copyTotalBTC) ImageButton copyTotalBTC;
-    
-    
+
+    @InjectView(R.id.totalARS)
+    TextView totalARS;
+    @InjectView(R.id.totalUSD)
+    TextView totalUSD;
+    @InjectView(R.id.totalBTC)
+    TextView totalBTC;
+    @InjectView(R.id.editARS)
+    EditText editARS;
+    @InjectView(R.id.editBTC)
+    EditText editBTC;
+    @InjectView(R.id.editUSD)
+    EditText editUSD;
+
+    @InjectView(R.id.copyARS)
+    ImageButton copyARS;
+    @InjectView(R.id.copyUSD)
+    ImageButton copyUSD;
+    @InjectView(R.id.copyBTC)
+    ImageButton copyBTC;
+
+    @InjectView(R.id.copyTotalARS)
+    ImageButton copyTotalARS;
+    @InjectView(R.id.copyTotalUSD)
+    ImageButton copyTotalUSD;
+    @InjectView(R.id.copyTotalBTC)
+    ImageButton copyTotalBTC;
+
+
     @OnClick(R.id.clearExchange)
-    public void clearExchangeClicked()
-    {
+    public void clearExchangeClicked() {
         reset();
     }
 
     @OnClick(R.id.copyARS)
-    public void copyARSClicked()
-    {
+    public void copyARSClicked() {
         CharSequence copy = editARS.getText();
-        if(!Strings.isBlank(copy)) {
+        if (!Strings.isBlank(copy)) {
             setTextOnClipboard("ARS", copy);
         }
     }
 
     @OnClick(R.id.copyUSD)
-    public void copyUSDClicked()
-    {
+    public void copyUSDClicked() {
         CharSequence copy = editUSD.getText();
-        if(!Strings.isBlank(copy)) {
+        if (!Strings.isBlank(copy)) {
             setTextOnClipboard("USD", copy);
         }
     }
 
     @OnClick(R.id.copyBTC)
-    public void copyBTCClicked()
-    {
+    public void copyBTCClicked() {
         CharSequence copy = editBTC.getText();
-        if(!Strings.isBlank(copy)) {
+        if (!Strings.isBlank(copy)) {
             setTextOnClipboard("BTC", copy);
         }
     }
-    
+
     @OnClick(R.id.copyTotalARS)
-    public void copyTotalArsClicked()
-    {
+    public void copyTotalArsClicked() {
         CharSequence copy = totalARS.getText();
-        if(!Strings.isBlank(copy)) {
+        if (!Strings.isBlank(copy)) {
             setTextOnClipboard("Total ARS", copy);
         }
     }
 
     @OnClick(R.id.copyTotalUSD)
-    public void copyTotalUsdClicked()
-    {
+    public void copyTotalUsdClicked() {
         CharSequence copy = totalUSD.getText();
-        if(!Strings.isBlank(copy)) {
+        if (!Strings.isBlank(copy)) {
             setTextOnClipboard("Total USD", copy);
         }
     }
 
     @OnClick(R.id.copyTotalBTC)
-    public void copyTotalBtcClicked()
-    {
+    public void copyTotalBtcClicked() {
         CharSequence copy = totalBTC.getText();
-        if(!Strings.isBlank(copy)) {
+        if (!Strings.isBlank(copy)) {
             setTextOnClipboard("Total BTC", copy);
         }
     }
@@ -163,32 +175,30 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
 
     private Observable<Exchange> exchangeObservable;
     Subscription subscription = Subscriptions.empty();
-    
+
     double rateUSD = 0;
     double rateARS = 0;
     double bitcoinValue = DEFAULT_BTC_VALUE;
     double arsValue = 0;
     double usdValue = 0;
-    
+
     int whoHasFocus = 0;
     Exchange exchange;
     AlertDialog dialog;
     Toolbar toolbar;
-    
-    public static Intent createStartIntent(Context context)
-    {
+
+    public static Intent createStartIntent(Context context) {
         return new Intent(context, CalculatorActivity.class);
     }
-    
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setContentView(R.layout.activity_calculator);
 
         ButterKnife.inject(this);
-        
+
         // database data
         String exchangeName = exchangeService.getSelectedExchangeName();
         exchangeObservable = bindActivity(this, dbManager.exchangeQuery(exchangeName));
@@ -198,32 +208,28 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-        
+
         subscribeData();
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
 
         subscription.unsubscribe();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_calculator, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -233,21 +239,19 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
-        } else if(id == R.id.action_print) {
+        } else if (id == R.id.action_print) {
             onReceipt();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void onProgress(boolean show)
-    {
-        progress.setVisibility((show)? View.VISIBLE: View.GONE);
-        content.setVisibility((show)? View.GONE: View.VISIBLE);
+    private void onProgress(boolean show) {
+        progress.setVisibility((show) ? View.VISIBLE : View.GONE);
+        content.setVisibility((show) ? View.GONE : View.VISIBLE);
     }
 
-    private void setupEditText()
-    {
+    private void setupEditText() {
         editBTC.setOnFocusChangeListener(this);
         editBTC.addTextChangedListener(this);
         editBTC.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(8)});
@@ -255,65 +259,72 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         editUSD.setOnFocusChangeListener(this);
         editUSD.addTextChangedListener(this);
         editUSD.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(2)});
-        
+
         editARS.setOnFocusChangeListener(this);
         editARS.addTextChangedListener(this);
         editARS.setFilters(new InputFilter[]{new Calculations.DecimalPlacesInputFilter(2)});
     }
-  
-    private void setupToolbar()
-    {
+
+    private void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Show menu icon
         final ActionBar ab = getSupportActionBar();
-        ab.setTitle(R.string.title_calculator);
-        //ab.setHomeAsUpIndicator(R.drawable.ic_action_navigation_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setTitle(R.string.title_calculator);
+            //ab.setHomeAsUpIndicator(R.drawable.ic_action_navigation_menu);
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    public void subscribeData()
-    {
-        // we alreayd set the value don't reset on rotate or resume
-        if(editBTC != null && !Strings.isBlank(editBTC.getText().toString())) {
+    public void subscribeData() {
+        // we already set the value don't reset on rotate or resume
+        if (editBTC != null && !Strings.isBlank(editBTC.getText().toString())) {
             onProgress(false);
             return;
         }
-        
-        subscription = exchangeObservable.subscribe(new Action1<Exchange>()
-        {
-            @Override
-            public void call(Exchange exchange)
-            {
-                setExchange(exchange);
-                onProgress(false);
-            }
-        }, new Action1<Throwable>()
-        {
-            @Override
-            public void call(Throwable throwable)
-            {
-                onProgress(false);
-                reportError(throwable);
-            }
-        });
+
+        subscription = exchangeObservable
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Exchange>() {
+                    @Override
+                    public void call(final Exchange exchange) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setExchange(exchange);
+                                onProgress(false);
+                            }
+                        });
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(final Throwable throwable) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                onProgress(false);
+                                reportError(throwable);
+                            }
+                        });
+                    }
+                });
     }
 
-    private void setExchange(Exchange exchange)
-    {
+    private void setExchange(Exchange exchange) {
         this.exchange = exchange;
-        
+
         rateUSD = exchange.getUSDValue();
         rateARS = exchange.getARSValue();
 
         reset();
     }
-    
-    private void reset() 
-    {
+
+    private void reset() {
         bitcoinValue = DEFAULT_BTC_VALUE;
-        
+
         arsValue = Calculations.calculateARSValue(rateARS, bitcoinValue);
         usdValue = Calculations.calculateUSDValue(rateUSD, bitcoinValue);
 
@@ -324,24 +335,21 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         calculateTotal();
     }
 
-    private void setTextOnClipboard(String title, CharSequence copy)
-    {
+    private void setTextOnClipboard(String title, CharSequence copy) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(title, copy);
         clipboard.setPrimaryClip(clip);
         toast(R.string.text_saved_to_clipboard);
     }
-    
-    private void calculateTotal()
-    {
+
+    private void calculateTotal() {
         totalBTC.setText(Conversions.formatBitcoinAmount(bitcoinValue));
         totalARS.setText(Conversions.formatCurrencyAmount(arsValue));
         totalUSD.setText(Conversions.formatCurrencyAmount(usdValue));
     }
 
     @Override
-    public void onFocusChange(View view, boolean b)
-    {
+    public void onFocusChange(View view, boolean b) {
         switch (view.getId()) {
             case R.id.editARS:
                 whoHasFocus = EDIT_ARS;
@@ -356,33 +364,23 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     }
 
     @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
-    {
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
     }
 
     @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
-    {
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
     }
 
     @Override
-    public void afterTextChanged(Editable editable)
-    {
+    public void afterTextChanged(Editable editable) {
         String stringValue = editable.toString();
-       
         switch (whoHasFocus) {
-            
             case EDIT_ARS:
-                
                 if (editARS.getText().hashCode() == editable.hashCode()) {
-                    
                     arsValue = Doubles.convertToDouble(stringValue);
-                    
                     bitcoinValue = Calculations.calculateBTC(arsValue, rateARS);
-                    
                     usdValue = Calculations.calculateUSDValue(rateUSD, bitcoinValue);
-
-                    if(Strings.isBlank(stringValue)) {
+                    if (Strings.isBlank(stringValue)) {
                         editUSD.setText("");
                         editBTC.setText("");
                     } else {
@@ -390,20 +388,13 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
                         editBTC.setText(Conversions.formatBitcoinAmount(bitcoinValue));
                     }
                 }
-                
                 break;
-            
             case EDIT_USD:
-                
                 if (editUSD.getText().hashCode() == editable.hashCode()) {
-
                     usdValue = Doubles.convertToDouble(stringValue);
-                    
                     bitcoinValue = Calculations.calculateBTC(usdValue, rateUSD);
-                    
                     arsValue = Calculations.calculateARSValue(rateARS, bitcoinValue);
-
-                    if(Strings.isBlank(stringValue)) {
+                    if (Strings.isBlank(stringValue)) {
                         editARS.setText("");
                         editBTC.setText("");
                     } else {
@@ -413,16 +404,11 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
                 }
                 break;
             case EDIT_BTC:
-                
                 if (editBTC.getText().hashCode() == editable.hashCode()) {
-
                     bitcoinValue = Doubles.convertToDouble(stringValue);
-                    
                     usdValue = Calculations.calculateUSDValue(rateUSD, bitcoinValue);
-                    
                     arsValue = Calculations.calculateARSValue(rateARS, bitcoinValue);
-
-                    if(Strings.isBlank(stringValue)) {
+                    if (Strings.isBlank(stringValue)) {
                         editARS.setText("");
                         editUSD.setText("");
                     } else {
@@ -432,12 +418,12 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
                 }
                 break;
         }
-        
+
         calculateTotal();
     }
 
-    public void createAlert()
-    {
+    public void createAlert() {
+        
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = inflater.inflate(R.layout.dialogview, null);
 
@@ -446,27 +432,23 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
 
         final EditText input = (EditText) dialogView.findViewById(android.R.id.text1);
         input.setImeActionLabel("Enter", KeyEvent.KEYCODE_ENTER);
-        input.setOnEditorActionListener(new TextView.OnEditorActionListener()
-        {
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent)
-            {
-                if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     String value = input.getText().toString();
                     generateReceipt(value);
                     dialog.dismiss();
                 }
-                
+
                 return false;
             }
         });
-        
+
         final Button button1 = (Button) dialogView.findViewById(android.R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener()
-        {
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 String value = input.getText().toString();
                 generateReceipt(value);
                 dialog.dismiss();
@@ -474,28 +456,39 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         });
 
         final Button button2 = (Button) dialogView.findViewById(android.R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener()
-        {
+        button2.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 dialog.dismiss();
             }
         });
-        
+
         dialog = alertDialog.show();
     }
 
-    private void onReceipt()
-    {
-        createAlert();
+    private void onReceipt() {
+        if(ContextCompat.checkSelfPermission(CalculatorActivity.this, 
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            createAlert();
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 212);
+            } else {
+                createAlert();
+            }
+        }
     }
 
-    private void shareReceipt(File file)
-    {
-        Timber.d("Share Receipt");
+    /**
+     * Updated for Android N support
+     * @param file
+     */
+    private void shareReceipt(File file) {
         
-        Uri uri = Uri.fromFile(file);
+        Timber.d("Share Receipt");
+      
+        Uri uri = FileProvider.getUriForFile(CalculatorActivity.this, BuildConfig.APPLICATION_ID + ".provider", file);
+        
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, file.getName());
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -503,27 +496,25 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
         sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(sendIntent);
     }
-    
-    public void generateReceipt(String title)
-    {
+
+    public void generateReceipt(String title) {
         Timber.d("Generate Receipt");
-        
         final WriterService writerService = new WriterService();
-        Observable<File> observable = writerService.writeReceiptFileObservable(title, exchange, String.valueOf(bitcoinValue), String.valueOf(arsValue), String.valueOf(usdValue));
-        observable.subscribe(new Action1<File>()
-        {
-            @Override
-            public void call(File file)
-            {
-                shareReceipt(file);
-            }
-        }, new Action1<Throwable>()
-        {
-            @Override
-            public void call(Throwable throwable)
-            {
-                reportError(throwable);
-            }
-        });
+        writerService.writeReceiptFileObservable(CalculatorActivity.this, title, exchange,
+                String.valueOf(bitcoinValue), String.valueOf(arsValue),
+                String.valueOf(usdValue))
+                .observeOn(Schedulers.newThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<File>() {
+                    @Override
+                    public void call(File file) {
+                        shareReceipt(file);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        reportError(throwable);
+                    }
+                });
     }
 }

@@ -21,11 +21,11 @@ package com.thanksmister.btcblue;
 import dagger.ObjectGraph;
 
 public class Injector {
-    
+
     private static ObjectGraph objectGraph;
 
     public static void init(BaseApplication application) {
-        
+
         ApplicationModule module = new ApplicationModule(application);
         objectGraph = ObjectGraph.create(module);
     }
@@ -34,8 +34,7 @@ public class Injector {
         return objectGraph.inject(object);
     }
 
-    public static void reset(BaseApplication application) 
-    {
+    public static void reset(BaseApplication application) {
         init(application);
     }
 }

@@ -23,8 +23,7 @@ package com.thanksmister.btcblue.data.api.model;
 // "vwap": "586.3", "volume": "2969.08554131", 
 // "low": "578.93", "ask": "580.85"}
 
-public class Bitstamp
-{
+public class Bitstamp {
     public String high;
     public String last;
     public String bid;

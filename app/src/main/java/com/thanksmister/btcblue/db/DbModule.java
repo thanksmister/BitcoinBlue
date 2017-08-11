@@ -31,27 +31,22 @@ import dagger.Provides;
 import timber.log.Timber;
 
 @Module(complete = false, library = true)
-public final class DbModule
-{
+public final class DbModule {
     @Provides
     @Singleton
-    SQLiteOpenHelper provideOpenHelper(BaseApplication application)
-    {
+    SQLiteOpenHelper provideOpenHelper(BaseApplication application) {
         return new DbOpenHelper(application);
     }
 
     @Provides
     @Singleton
-    SqlBrite provideSqlBrite(SQLiteOpenHelper openHelper)
-    {
+    SqlBrite provideSqlBrite(SQLiteOpenHelper openHelper) {
         SqlBrite db = SqlBrite.create(openHelper);
 
         if (BuildConfig.DEBUG) {
-            db.setLogger(new SqlBrite.Logger()
-            {
+            db.setLogger(new SqlBrite.Logger() {
                 @Override
-                public void log(String message)
-                {
+                public void log(String message) {
                     Timber.tag("Database").v(message);
                 }
             });

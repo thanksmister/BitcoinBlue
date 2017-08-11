@@ -35,28 +35,25 @@ import retrofit.client.OkClient;
         complete = false,
         library = true
 )
-public final class ApiModule 
-{
+public final class ApiModule {
     private static final String BITSTAMP_API_ENDPOINT = "https://www.bitstamp.net";
     private static final String BLUELYTICS_API_ENDPOINT = "http://api.bluelytics.com.ar";
     private static final String COINBASE_API_ENDPOINT = "https://coinbase.com";
     private static final String BITCOIN_AVERAGE_API_ENDPOINT = "https://apiv2.bitcoinaverage.com";
-   
-    @Provides 
+
+    @Provides
     @Singleton
-    Client provideClient(OkHttpClient client) 
-    {
+    Client provideClient(OkHttpClient client) {
         client = new OkHttpClient();
         client.setConnectTimeout(30, TimeUnit.SECONDS); // connect timeout
         client.setReadTimeout(30, TimeUnit.SECONDS);    // socket timeout
         client.setConnectionPool(new ConnectionPool(0, 5 * 60 * 1000));
         return new OkClient(client);
     }
-    
+
     @Provides
     @Singleton
-    BitcoinAverage provideBitcoinAverage(Client client)
-    {
+    BitcoinAverage provideBitcoinAverage(Client client) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(client)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
@@ -67,8 +64,7 @@ public final class ApiModule
 
     @Provides
     @Singleton
-    CoinbaseMarket provideCoinbaseMarket(Client client)
-    {
+    CoinbaseMarket provideCoinbaseMarket(Client client) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(client)
                 .setLogLevel(RestAdapter.LogLevel.NONE)
@@ -79,8 +75,7 @@ public final class ApiModule
 
     @Provides
     @Singleton
-    BitstampExchange provideBitstampExchange(Client client)
-    {
+    BitstampExchange provideBitstampExchange(Client client) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(client)
                 .setLogLevel(RestAdapter.LogLevel.NONE)
@@ -91,8 +86,7 @@ public final class ApiModule
 
     @Provides
     @Singleton
-    Bluelytics provideBluelytics(Client client)
-    {
+    Bluelytics provideBluelytics(Client client) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(client)
                 .setLogLevel(RestAdapter.LogLevel.NONE)

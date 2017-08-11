@@ -23,11 +23,9 @@ import java.net.UnknownHostException;
 import retrofit.RetrofitError;
 import timber.log.Timber;
 
-public class ServiceUtils
-{
-    public static boolean isNetworkError(Throwable throwable)
-    {
-        if(throwable instanceof UnknownHostException) {
+public class ServiceUtils {
+    public static boolean isNetworkError(Throwable throwable) {
+        if (throwable instanceof UnknownHostException) {
             return true;
         } else if (throwable instanceof RetrofitError) {
             RetrofitError retroError = (RetrofitError) throwable;
@@ -36,21 +34,19 @@ public class ServiceUtils
 
         return false;
     }
-    
+
     // authorization error
-    public static boolean isHttp403Error(Throwable throwable)
-    {
+    public static boolean isHttp403Error(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
             RetrofitError retroError = (RetrofitError) throwable;
             return (getStatusCode(retroError) == 403);
-        } 
+        }
 
         return false;
     }
 
     // bad request
-    public static boolean isHttp400Error(Throwable throwable)
-    {
+    public static boolean isHttp400Error(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
             RetrofitError retroError = (RetrofitError) throwable;
             return (getStatusCode(retroError) == 400);
@@ -60,8 +56,7 @@ public class ServiceUtils
     }
 
     // network error
-    public static boolean isHttp401Error(Throwable throwable)
-    {
+    public static boolean isHttp401Error(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
             RetrofitError retroError = (RetrofitError) throwable;
             return (getStatusCode(retroError) == 401);
@@ -71,8 +66,7 @@ public class ServiceUtils
     }
 
     // server error
-    public static boolean isHttp500Error(Throwable throwable)
-    {
+    public static boolean isHttp500Error(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
             RetrofitError retroError = (RetrofitError) throwable;
             return (getStatusCode(retroError) == 500);
@@ -81,8 +75,7 @@ public class ServiceUtils
         return false;
     }
 
-    public static boolean isHttp404Error(Throwable throwable)
-    {
+    public static boolean isHttp404Error(Throwable throwable) {
         if (throwable instanceof RetrofitError) {
             RetrofitError retroError = (RetrofitError) throwable;
             return (getStatusCode(retroError) == 404);
@@ -91,23 +84,22 @@ public class ServiceUtils
         return false;
     }
 
-    public static int getStatusCode(RetrofitError error) 
-    {
+    public static int getStatusCode(RetrofitError error) {
         try {
             if (error.getKind() == RetrofitError.Kind.NETWORK) {
                 return 503; // Use another code if you'd prefer
-            } 
-        } catch (Exception e){
+            }
+        } catch (Exception e) {
             Timber.e(e.getLocalizedMessage());
             return 503; // Use another code if you'd prefer
         }
-        
+
         try {
             return error.getResponse().getStatus();
-        } catch(Throwable e){
+        } catch (Throwable e) {
             Timber.e("Error Status: " + e.getMessage());
         }
-        
+
         return 0;
     }
 }

@@ -20,9 +20,10 @@ package com.thanksmister.btcblue.data.rx;
 
 import rx.Observer;
 
-/** An {@link rx.Observer} that toggles the refresh animation state. */
-public abstract class RefreshObserver<T> implements Observer<T>
-{
+/**
+ * An {@link rx.Observer} that toggles the refresh animation state.
+ */
+public abstract class RefreshObserver<T> implements Observer<T> {
     /*@Override 
     public void onCompleted() 
     {
@@ -37,5 +38,6 @@ public abstract class RefreshObserver<T> implements Observer<T>
 
     public abstract void onEnd();*/
     public abstract void onRefreshEnd();
+
     public abstract void onRefreshStart();
 }

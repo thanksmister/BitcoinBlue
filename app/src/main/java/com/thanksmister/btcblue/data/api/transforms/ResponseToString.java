@@ -25,11 +25,9 @@ import java.io.InputStreamReader;
 import retrofit.client.Response;
 import rx.functions.Func1;
 
-public class ResponseToString implements Func1<Response, String>
-{
+public class ResponseToString implements Func1<Response, String> {
     @Override
-    public String call(Response response)
-    {
+    public String call(Response response) {
         //Try to get response body
         BufferedReader reader = null;
         StringBuilder sb = new StringBuilder();

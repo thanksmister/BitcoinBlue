@@ -29,11 +29,9 @@ import java.util.List;
 import retrofit.client.Response;
 import rx.functions.Func1;
 
-public class ResponseToBluelytics implements Func1<Response, List<Bluelytic>>
-{
+public class ResponseToBluelytics implements Func1<Response, List<Bluelytic>> {
     @Override
-    public List<Bluelytic> call(Response response)
-    {
+    public List<Bluelytic> call(Response response) {
         //Try to get response body
         BufferedReader reader = null;
         StringBuilder sb = new StringBuilder();

@@ -22,6 +22,6 @@ package com.thanksmister.btcblue;
  * Store the BitcoinAverage key and secret, should be replaced bo your own key and secret.
  */
 public class Constants {
-    public static String PUBLIC_KEY = "your_bitcoin_average_key";
-    public static String SECRET = "your_bitcoin_average_secret";
+    public static String PUBLIC_KEY = "MTYzZjVkZGI0NDc3NDlmNDk2ZWQyMzVjM2NkMzAwMDc";
+    public static String SECRET = "ZDE2OWMzODdjNDJhNDYzZGEzYTQ2MzE5ODRkMGQ4MGY2NWFiMTIzZDg4ZDQ0MGRiYjc5MjY4OGQ2NjlmMjM0Yw";
 }

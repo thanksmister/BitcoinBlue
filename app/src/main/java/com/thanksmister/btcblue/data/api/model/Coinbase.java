@@ -18,19 +18,16 @@
 
 package com.thanksmister.btcblue.data.api.model;
 
-public class Coinbase
-{
+public class Coinbase {
     public Subtotal subtotal;
     public Total total;
 
-    public class Subtotal
-    {
+    public class Subtotal {
         public String amount;
         public String currency;
     }
 
-    public class Total
-    {
+    public class Total {
         public String amount;
         public String currency;
     }

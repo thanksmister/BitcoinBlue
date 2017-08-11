@@ -24,8 +24,7 @@ import retrofit.http.GET;
 import retrofit.http.Path;
 import rx.Observable;
 
-public interface CoinbaseMarket
-{
+public interface CoinbaseMarket {
     @GET("/api/v1/prices/{type}")
     Observable<Coinbase> coinbase(@Path("type") String type);
 }

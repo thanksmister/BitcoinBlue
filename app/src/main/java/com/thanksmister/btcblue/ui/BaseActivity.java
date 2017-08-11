@@ -34,145 +34,123 @@ import com.thanksmister.btcblue.Injector;
 import com.thanksmister.btcblue.R;
 import com.thanksmister.btcblue.utils.ServiceUtils;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import rx.functions.Action0;
 import timber.log.Timber;
 
-/** Base activity which sets up a per-activity object graph and performs injection. */
-public abstract class BaseActivity extends AppCompatActivity 
-{
-    @Override 
-    protected void onCreate(Bundle savedInstanceState) 
-    {
+/**
+ * Base activity which sets up a per-activity object graph and performs injection.
+ */
+public abstract class BaseActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Injector.inject(this);
     }
 
-    @Override 
-    protected void onDestroy() 
-    {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
-
         ButterKnife.reset(this);
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
-
         getApplicationContext().unregisterReceiver(connReceiver);
     }
 
     @Override
     public void onResume() {
-
         super.onResume();
-        
         getApplicationContext().registerReceiver(connReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
-    
+
     // TODO replace with RxAndroid
-    private BroadcastReceiver connReceiver = new BroadcastReceiver()
-    {
+    private BroadcastReceiver connReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            ConnectivityManager connectivityManager = ((ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE));
+            ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
             NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            if(currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-               // do nothing
+            if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+                // do nothing
             } else {
                 snack(getString(R.string.error_no_internet));
             }
         }
     };
 
-    protected void reportError(Throwable throwable)
-    {
-        if(throwable != null && throwable.getLocalizedMessage() != null) {
-            Timber.e("Data Error: " + throwable.getLocalizedMessage());
+    protected void reportError(Throwable throwable) {
+        if (throwable != null && throwable.getMessage() != null) {
+            Timber.e("Data Error: " + throwable.getMessage());
         } else {
             Timber.e("Null Error");
         }
     }
 
-    protected void handleError(Throwable throwable)
-    {
+    protected void handleError(Throwable throwable) {
         handleError(throwable, "", null);
     }
 
-    protected void handleError(Throwable throwable, String label, Action0 action)
-    {
-        if(ServiceUtils.isNetworkError(throwable)) {
+    protected void handleError(Throwable throwable, String label, Action0 action) {
+        if (ServiceUtils.isNetworkError(throwable)) {
             Timber.e("Data Error: " + "Code 503");
             snackAction(getString(R.string.error_no_internet), label, action);
-        } else if(ServiceUtils.isHttp401Error(throwable)) {
+        } else if (ServiceUtils.isHttp401Error(throwable)) {
             Timber.e("Data Error: " + "Code 401");
             snackAction(getString(R.string.error_no_internet), label, action);
-        } else if(ServiceUtils.isHttp500Error(throwable)) {
+        } else if (ServiceUtils.isHttp500Error(throwable)) {
             Timber.e("Data Error: " + "Code 500");
             snackAction(getString(R.string.error_service_error), label, action);
-        } else if(ServiceUtils.isHttp404Error(throwable)) {
+        } else if (ServiceUtils.isHttp404Error(throwable)) {
             Timber.e("Data Error: " + "Code 404");
             snackAction(getString(R.string.error_service_error), label, action);
-        } else if(ServiceUtils.isHttp400Error(throwable)) {
+        } else if (ServiceUtils.isHttp400Error(throwable)) {
             snackAction(getString(R.string.error_service_error), label, action);
-        } else if(throwable != null && throwable.getLocalizedMessage() != null) {
+        } else if (throwable != null && throwable.getLocalizedMessage() != null) {
             Timber.e("Data Error: " + throwable.getLocalizedMessage());
             snackAction(throwable.getLocalizedMessage(), label, action);
         } else {
             snackAction(R.string.error_unknown_error, label, action);
         }
     }
-    
-    protected void snack(final String message)
-    {
+
+    protected void snack(final String message) {
         Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
                 .show();
     }
 
-    protected void snack(final int message)
-    {
+    protected void snack(final int message) {
         Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
                 .show();
     }
 
-    protected void snackAction(final int message, final String actionLabel, final Action0 action0)
-    {
+    protected void snackAction(final int message, final String actionLabel, final Action0 action0) {
         Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
                 .setAction(actionLabel, new View.OnClickListener() {
                     @Override
-                    public void onClick(View view)
-                    {
+                    public void onClick(View view) {
                         action0.call();
                     }
                 })
                 .show();
     }
 
-    protected void snackAction(final String message,  final String actionLabel, final Action0 action0)
-    {
+    protected void snackAction(final String message, final String actionLabel, final Action0 action0) {
         Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
                 .setAction(actionLabel, new View.OnClickListener() {
                     @Override
-                    public void onClick(View view)
-                    {
+                    public void onClick(View view) {
                         action0.call();
                     }
                 })
                 .show();
     }
 
-    protected void toast(int messageId)
-    {
+    protected void toast(int messageId) {
         Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
     }
 
-
-    protected void toast(String message)
-    {
+    protected void toast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

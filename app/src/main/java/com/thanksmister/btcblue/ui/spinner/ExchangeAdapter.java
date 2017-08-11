@@ -33,47 +33,40 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ExchangeAdapter extends ArrayAdapter<DisplayExchange>
-{
+public class ExchangeAdapter extends ArrayAdapter<DisplayExchange> {
     private LayoutInflater inflater;
     private List<DisplayExchange> values;
 
-    public ExchangeAdapter(Context context, int textViewResourceId)
-    {
+    public ExchangeAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-    
-    public void setData(List<DisplayExchange> values)
-    {
+
+    public void setData(List<DisplayExchange> values) {
         this.values = values;
         notifyDataSetInvalidated();
     }
 
-    public int getCount()
-    {
-        if(values == null)
+    public int getCount() {
+        if (values == null)
             return 0;
-        
+
         return values.size();
     }
 
-    public DisplayExchange getItem(int position)
-    {
-        if(values == null)
+    public DisplayExchange getItem(int position) {
+        if (values == null)
             return null;
-        
+
         return values.get(position);
     }
 
-    public long getItemId(int position)
-    {
+    public long getItemId(int position) {
         return position;
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent)
-    {
+    public View getView(int position, View view, ViewGroup parent) {
         ViewHolder holder;
         if (view != null) {
             holder = (ViewHolder) view.getTag();
@@ -85,25 +78,24 @@ public class ExchangeAdapter extends ArrayAdapter<DisplayExchange>
 
         // Fix for exchange being removed from BitcoinAverage list after 
         // previously been available (Coinbase)
-        if(!values.isEmpty()) {
+        if (!values.isEmpty()) {
             DisplayExchange exchange = null;
             try {
                 exchange = values.get(position);
                 holder.displayName.setText(exchange.getDisplayName());
             } catch (IndexOutOfBoundsException e) {
-               exchange = values.get(0);
+                exchange = values.get(0);
                 holder.displayName.setText(exchange.getDisplayName());
             }
         } else {
             holder.displayName.setText(R.string.spinner_no_exchange_data);
         }
-        
+
         return view;
     }
 
     @Override
-    public View getDropDownView(int position, View view, ViewGroup parent)
-    {
+    public View getDropDownView(int position, View view, ViewGroup parent) {
         ViewHolder holder;
         if (view != null) {
             holder = (ViewHolder) view.getTag();
@@ -118,13 +110,11 @@ public class ExchangeAdapter extends ArrayAdapter<DisplayExchange>
         return view;
     }
 
-    class ViewHolder
-    {
+    class ViewHolder {
         @InjectView(R.id.displayName)
         TextView displayName;
 
-        public ViewHolder(View view)
-        {
+        public ViewHolder(View view) {
             ButterKnife.inject(this, view);
         }
     }

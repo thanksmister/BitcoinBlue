@@ -32,12 +32,11 @@ import static com.squareup.sqlbrite.SqlBrite.Query;
 /**
  * https://github.com/square/sqlbrite/
  */
-public abstract class ExchangeItem
-{
+public abstract class ExchangeItem {
     public static final String TABLE = "exchange_item";
 
     public static final String ID = "_id";
-    
+
     public static final String DISPLAY_NAME = "display_name";
     public static final String ASK = "ask";
     public static final String BID = "bid";
@@ -49,12 +48,12 @@ public abstract class ExchangeItem
     public static final String OFFICIAL_ASK = "official_ask";
     public static final String CREATED_AT = "created_at";
 
-    public static final String QUERY = "SELECT * FROM " 
+    public static final String QUERY = "SELECT * FROM "
             + ExchangeItem.TABLE
             + " ORDER BY "
             + ExchangeItem.DISPLAY_NAME
             + " ASC";
-    
+
     public static final String QUERY_ITEM_SOURCE = "SELECT * FROM "
             + ExchangeItem.TABLE
             + " WHERE "
@@ -62,17 +61,27 @@ public abstract class ExchangeItem
             + " = ?";
 
     public abstract long id();
+
     public abstract String display_name();
+
     public abstract String ask();
+
     public abstract String bid();
+
     public abstract String last();
+
     public abstract String source();
+
     public abstract String blue_bid();
+
     public abstract String blue_ask();
+
     public abstract String official_bid();
+
     public abstract String official_ask();
+
     public abstract String created_at();
-    
+
     public static final Func1<Query, List<Exchange>> MAP = new Func1<Query, List<Exchange>>() {
         @Override
         public List<Exchange> call(Query query) {
@@ -91,7 +100,7 @@ public abstract class ExchangeItem
                     String official_bid = Db.getString(cursor, OFFICIAL_BID);
                     String official_ask = Db.getString(cursor, OFFICIAL_ASK);
                     String created_at = Db.getString(cursor, CREATED_AT);
-                    
+
                     values.add(new Exchange(id, display_name, ask, bid, last, source, blue_bid, blue_ask, official_bid, official_ask, created_at));
                 }
                 return values;
@@ -106,7 +115,7 @@ public abstract class ExchangeItem
         public Exchange call(Query query) {
             Cursor cursor = query.run();
             try {
-                if(cursor.getCount() > 0) {
+                if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     long id = Db.getLong(cursor, ID);
                     String display_name = Db.getString(cursor, DISPLAY_NAME);
@@ -119,20 +128,19 @@ public abstract class ExchangeItem
                     String official_bid = Db.getString(cursor, OFFICIAL_BID);
                     String official_ask = Db.getString(cursor, OFFICIAL_ASK);
                     String created_at = Db.getString(cursor, CREATED_AT);
-                    
+
                     return new Exchange(id, display_name, ask, bid, last, source, blue_bid, blue_ask, official_bid, official_ask, created_at);
                 }
 
                 return null;
-             
+
             } finally {
                 cursor.close();
             }
         }
     };
 
-    public static Builder createBuilder(Exchange item)
-    {
+    public static Builder createBuilder(Exchange item) {
         return new Builder()
                 .display_name(item.getDisplay_name())
                 .bid(item.getBid())
@@ -145,9 +153,9 @@ public abstract class ExchangeItem
                 .official_ask(item.getOfficial_ask())
                 .created_at(item.getCreated_at());
     }
-    
+
     public static final class Builder {
-        
+
         private final ContentValues values = new ContentValues();
 
         public Builder id(long id) {
@@ -199,14 +207,14 @@ public abstract class ExchangeItem
             values.put(OFFICIAL_ASK, value);
             return this;
         }
-        
+
         public Builder created_at(String value) {
             values.put(CREATED_AT, value);
             return this;
         }
-        
+
         public ContentValues build() {
-            return values; 
+            return values;
         }
     }
 }

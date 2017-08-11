@@ -27,8 +27,8 @@ import rx.Observable;
 public interface BitcoinAverage {
     @GET("/constants/time")
     Observable<Response> serverTime();
-    
+
     @GET("/exchanges/{exchange_name}")
     Observable<Response> perExchangeData(@Header("X-signature") String signature,
-                                    @Path("exchange_name") String exchange_name);
+                                         @Path("exchange_name") String exchange_name);
 }

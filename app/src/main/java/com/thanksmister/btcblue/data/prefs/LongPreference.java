@@ -20,41 +20,34 @@ package com.thanksmister.btcblue.data.prefs;
 
 import android.content.SharedPreferences;
 
-public class LongPreference
-{
+public class LongPreference {
     private final SharedPreferences preferences;
     private final String key;
     private final long defaultValue;
 
-    public LongPreference(SharedPreferences preferences, String key)
-    {
+    public LongPreference(SharedPreferences preferences, String key) {
         this(preferences, key, 0);
     }
 
-    public LongPreference(SharedPreferences preferences, String key, long defaultValue)
-    {
+    public LongPreference(SharedPreferences preferences, String key, long defaultValue) {
         this.preferences = preferences;
         this.key = key;
         this.defaultValue = defaultValue;
     }
 
-    public long get()
-    {
+    public long get() {
         return preferences.getLong(key, defaultValue);
     }
 
-    public boolean isSet()
-    {
+    public boolean isSet() {
         return preferences.contains(key);
     }
 
-    public void set(long value)
-    {
+    public void set(long value) {
         preferences.edit().putLong(key, value).apply();
     }
 
-    public void delete()
-    {
+    public void delete() {
         preferences.edit().remove(key).apply();
     }
 }

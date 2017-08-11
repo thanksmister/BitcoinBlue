@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Parser {
-  
+
     public static Exchange parseExchange(String response) {
         JSONObject jsonObject;
         String created_at = Dates.getLocalDateTime();
@@ -43,7 +43,7 @@ public class Parser {
             String display_name = "";
             if (jsonObject.has("symbols")) {
                 JSONObject symbols = jsonObject.getJSONObject("symbols");
-                if(symbols.has("BTCUSD")) {
+                if (symbols.has("BTCUSD")) {
                     JSONObject BTCUSD = symbols.getJSONObject("BTCUSD");
                     if (BTCUSD.has("ask")) ask = (BTCUSD.getString("ask"));
                     if (BTCUSD.has("bid")) bid = (BTCUSD.getString("bid"));
@@ -60,7 +60,7 @@ public class Parser {
 
         return exchange;
     }
-    
+
     public static List<Bluelytic> parseBluelytic(String response) {
         JSONObject jsonObject;
         try {

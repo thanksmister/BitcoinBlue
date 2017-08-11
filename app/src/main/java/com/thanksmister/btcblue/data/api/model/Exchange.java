@@ -19,8 +19,7 @@ package com.thanksmister.btcblue.data.api.model;
 
 import com.thanksmister.btcblue.utils.Calculations;
 
-public class Exchange
-{
+public class Exchange {
     private long _id;
     private String display_name;
     private String ask;
@@ -55,119 +54,96 @@ public class Exchange
         this.source = source;
         this.created_at = date;
     }
-    
-    public long get_id()
-    {
+
+    public long get_id() {
         return _id;
     }
 
-    public String getDisplay_name()
-    {
+    public String getDisplay_name() {
         return display_name;
     }
 
-    public String getAsk()
-    {
+    public String getAsk() {
         return ask;
     }
 
-    public String getBid()
-    {
+    public String getBid() {
         return bid;
     }
 
-    public String getLast()
-    {
+    public String getLast() {
         return last;
     }
 
-    public String getSource()
-    {
+    public String getSource() {
         return source;
     }
 
-    public String getBlue_bid()
-    {
+    public String getBlue_bid() {
         return blue_bid;
     }
 
-    public String getBlue_ask()
-    {
+    public String getBlue_ask() {
         return blue_ask;
     }
 
-    public String getOfficial_bid()
-    {
+    public String getOfficial_bid() {
         return official_bid;
     }
 
-    public String getOfficial_ask()
-    {
+    public String getOfficial_ask() {
         return official_ask;
     }
 
-    public String getCreated_at()
-    {
+    public String getCreated_at() {
         return created_at;
     }
 
-    public void setBlue_bid(String blue_bid)
-    {
+    public void setBlue_bid(String blue_bid) {
         this.blue_bid = blue_bid;
     }
 
-    public void setBlue_ask(String blue_ask)
-    {
+    public void setBlue_ask(String blue_ask) {
         this.blue_ask = blue_ask;
     }
 
-    public void setOfficial_bid(String official_bid)
-    {
+    public void setOfficial_bid(String official_bid) {
         this.official_bid = official_bid;
     }
 
-    public void setOfficial_ask(String official_ask)
-    {
+    public void setOfficial_ask(String official_ask) {
         this.official_ask = official_ask;
     }
 
-    public String getBlueFormatted()
-    {
+    public String getBlueFormatted() {
         return Calculations.calculateAverageBidAskFormatted(blue_bid, blue_ask);
     }
 
-    public double getBlueValue()
-    {
+    public double getBlueValue() {
         return Calculations.calculateAverageBidAskValue(blue_bid, blue_ask);
     }
 
-    public String getUSDFormatted()
-    {
+    public String getUSDFormatted() {
         return Calculations.calculateAverageBidAskFormatted(bid, ask);
     }
 
-    public double getUSDValue()
-    {
+    public double getUSDValue() {
         return Calculations.calculateAverageBidAskValue(bid, ask);
     }
 
-    public String getARSFormatted()
-    {
+    public String getARSFormatted() {
         return Calculations.calculateBlueARSFormatted(getBlueValue(), getUSDValue());
     }
 
-    public String getOfficialFormatted()
-    {
+    public String getOfficialFormatted() {
         return Calculations.calculateAverageBidAskFormatted(official_bid, official_ask);
     }
 
-    public String getOfficialARSFormatted()
-    {
+    public String getOfficialARSFormatted() {
         return Calculations.calculateAverageBidAskFormatted(getOfficialFormatted(), official_ask);
     }
 
-    public double getARSValue()
-    {
+    public double getARSValue() {
         return Calculations.calculateBlueARSValue(getBlueValue(), getUSDValue());
     }
 }

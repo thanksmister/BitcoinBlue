@@ -31,7 +31,6 @@ import dagger.Module;
         complete = false,
         library = true
 )
-public class UiModule 
-{
-        
+public class UiModule {
+
 }

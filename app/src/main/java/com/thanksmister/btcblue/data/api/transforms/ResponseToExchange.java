@@ -28,11 +28,9 @@ import java.io.InputStreamReader;
 import retrofit.client.Response;
 import rx.functions.Func1;
 
-public class ResponseToExchange implements Func1<Response, Exchange>
-{
+public class ResponseToExchange implements Func1<Response, Exchange> {
     @Override
-    public Exchange call(Response response)
-    {
+    public Exchange call(Response response) {
         //Try to get response body
         BufferedReader reader = null;
         StringBuilder sb = new StringBuilder();

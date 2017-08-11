@@ -20,9 +20,8 @@ package com.thanksmister.btcblue.data.prefs;
 
 import android.content.SharedPreferences;
 
-public class StringPreference
-{
-    
+public class StringPreference {
+
     private final SharedPreferences preferences;
     private final String key;
     private final String defaultValue;

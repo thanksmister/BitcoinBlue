@@ -22,10 +22,10 @@ package com.thanksmister.btcblue.data.api.model;
  * For display
  */
 public class DisplayExchange {
-    
+
     private String displayName;
     private String exchangeName;
-    
+
     public String getDisplayName() {
         return displayName;
     }

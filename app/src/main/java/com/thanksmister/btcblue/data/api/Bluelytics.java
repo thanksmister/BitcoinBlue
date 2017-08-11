@@ -22,8 +22,7 @@ import retrofit.client.Response;
 import retrofit.http.GET;
 import rx.Observable;
 
-public interface Bluelytics
-{
+public interface Bluelytics {
     @GET("/v2/latest")
-    Observable<Response>  latestPrice();
+    Observable<Response> latestPrice();
 }

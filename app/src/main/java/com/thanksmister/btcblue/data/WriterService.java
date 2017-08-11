@@ -23,6 +23,7 @@
 
 package com.thanksmister.btcblue.data;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.thanksmister.btcblue.data.api.model.Exchange;
@@ -39,33 +40,27 @@ import javax.inject.Singleton;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 @Singleton
-public class WriterService
-{
+public class WriterService {
+    
     @Inject
-    public WriterService()
-    {
+    public WriterService() {
     }
 
-    public Observable<File> writeReceiptFileObservable(final String title, final Exchange exchange,
-                                                       final String btcValue, final String arsValue, final String usdValue)
-    {
+    public Observable<File> writeReceiptFileObservable(final Context context, final String title, final Exchange exchange,
+                                                       final String btcValue, final String arsValue, final String usdValue) {
 
-        return Observable.create(new Observable.OnSubscribe<File>()
-        {
+        return Observable.create(new Observable.OnSubscribe<File>() {
             @Override
-            public void call(Subscriber<? super File> subscriber)
-            {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/BitcoinBlue");
+            public void call(Subscriber<? super File> subscriber) {
                 Date date = new Date();
                 String dateString = Dates.getLocalDateTime(date);
                 String timestamp = Dates.parseFileTimeStamp(date);
                 final String filename = (title.isEmpty()) ? timestamp : (title + "_" + timestamp) + ".csv";
-                File outFile = new File(folder, filename);
-
+                final File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+                Timber.d("File: " + outFile);
                 try {
                     BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 
@@ -92,7 +87,7 @@ public class WriterService
 
                     bw.append("BTC AMOUNT");
                     bw.append(',');
-                    
+
                     bw.newLine();
 
                     bw.append(title);
@@ -126,12 +121,11 @@ public class WriterService
                     subscriber.onCompleted();
 
                 } catch (Exception e) {
-
+                    Timber.e(e.getMessage());
                     String err = (e.getMessage() == null) ? "Failed to write file." : e.getMessage();
                     subscriber.onError(new Throwable(err));
                 }
             }
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
+        });
     }
 }

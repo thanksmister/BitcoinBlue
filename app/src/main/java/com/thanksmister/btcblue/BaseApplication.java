@@ -26,11 +26,9 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class BaseApplication extends Application
-{
+public class BaseApplication extends Application {
     @Override
-    public void onCreate() 
-    {
+    public void onCreate() {
         super.onCreate();
 
         if (BuildConfig.DEBUG) {
@@ -43,7 +41,7 @@ public class BaseApplication extends Application
         Configuration config = res.getConfiguration();
         config.locale = Locale.US;
         res.updateConfiguration(config, res.getDisplayMetrics());
-        
+
         Injector.init(this);
     }
 }

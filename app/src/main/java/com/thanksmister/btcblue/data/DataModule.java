@@ -42,33 +42,28 @@ import static android.content.Context.MODE_PRIVATE;
         complete = false,
         library = true
 )
-public final class DataModule
-{
+public final class DataModule {
     static final int DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
 
     @Provides
     @Singleton
-    SharedPreferences provideSharedPreferences(BaseApplication app)
-    {
+    SharedPreferences provideSharedPreferences(BaseApplication app) {
         return app.getSharedPreferences("com.thanksmister.bitcoinblue", MODE_PRIVATE);
     }
 
     @Provides
     @Singleton
-    ExchangeService provideExchangeService(SharedPreferences preferences, BitcoinAverage average, Bluelytics bluelytics)
-    {
+    ExchangeService provideExchangeService(SharedPreferences preferences, BitcoinAverage average, Bluelytics bluelytics) {
         return new ExchangeService(preferences, average, bluelytics);
     }
 
     @Provides
     @Singleton
-    OkHttpClient provideOkHttpClient(BaseApplication app)
-    {
+    OkHttpClient provideOkHttpClient(BaseApplication app) {
         return createOkHttpClient(app);
     }
 
-    static OkHttpClient createOkHttpClient(BaseApplication app)
-    {
+    static OkHttpClient createOkHttpClient(BaseApplication app) {
         OkHttpClient client = new OkHttpClient();
 
         // Install an HTTP cache in the application cache directory.

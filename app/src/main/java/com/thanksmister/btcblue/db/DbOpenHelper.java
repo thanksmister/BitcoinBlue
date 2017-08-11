@@ -22,17 +22,16 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DbOpenHelper extends SQLiteOpenHelper
-{
+public class DbOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bitcoinblue.db";
     private static final int DATABASE_VERSION = 11;
-   
+
     private static final String TYPE_TEXT = " TEXT";
     private static final String TYPE_TEXT_NOT_NULL = " TEXT NOT NULL";
     private static final String TYPE_INTEGER = " INTEGER";
     private static final String TYPE_REAL = " REAL";
     private static final String COMMA_SEP = ", ";
-    
+
     private static final String CREATE_EXCHANGES =
             "CREATE TABLE IF NOT EXISTS " + ExchangeItem.TABLE + " (" +
                     ExchangeItem.ID + " INTEGER PRIMARY KEY," +
@@ -45,31 +44,28 @@ public class DbOpenHelper extends SQLiteOpenHelper
                     ExchangeItem.SOURCE + TYPE_TEXT + COMMA_SEP +
                     ExchangeItem.OFFICIAL_ASK + TYPE_TEXT + COMMA_SEP +
                     ExchangeItem.OFFICIAL_BID + TYPE_TEXT + COMMA_SEP +
-                    ExchangeItem.CREATED_AT + TYPE_TEXT +")";
+                    ExchangeItem.CREATED_AT + TYPE_TEXT + ")";
 
-    
-    public DbOpenHelper(Context context)
-    {
+
+    public DbOpenHelper(Context context) {
         super(context, DATABASE_NAME, null /* factory */, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db)
-    {
+    public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_EXCHANGES);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
-            
+
             final String ALTER_TBL =
                     "ALTER TABLE " + ExchangeItem.TABLE +
                             " ADD COLUMN " + ExchangeItem.SOURCE + TYPE_TEXT;
 
             db.execSQL(ALTER_TBL);
-            
+
         }
     }
 }

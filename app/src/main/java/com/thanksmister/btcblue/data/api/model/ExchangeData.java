@@ -20,49 +20,41 @@ package com.thanksmister.btcblue.data.api.model;
 
 import java.util.ArrayList;
 
-public class ExchangeData
-{
+public class ExchangeData {
     private String timestamp;
     private ArrayList<Exchange> exchanges;
 
     private Integer index = 0;
 
-    
-    public Integer getIndex()
-    {
+
+    public Integer getIndex() {
         return index;
     }
 
-    public void setIndex(Integer index)
-    {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 
-    public String getTimestamp()
-    {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp)
-    {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public ArrayList<Exchange> getExchanges()
-    {
+    public ArrayList<Exchange> getExchanges() {
         return exchanges;
     }
 
-    public void setExchanges(ArrayList<Exchange> exchanges)
-    {
+    public void setExchanges(ArrayList<Exchange> exchanges) {
         this.exchanges = exchanges;
     }
 
-	public ExchangeData()
-	{
+    public ExchangeData() {
         exchanges = new ArrayList<Exchange>();
-        
-	}
 
-    
+    }
+
+
 }
