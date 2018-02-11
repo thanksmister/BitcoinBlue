@@ -41,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -113,6 +114,11 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     @InjectView(R.id.copyTotalBTC)
     ImageButton copyTotalBTC;
 
+    @InjectView(R.id.officialCheckBox)
+    CheckBox officialCheckBox;
+
+    @InjectView(R.id.marketTextView)
+    TextView marketTextView;
 
     @OnClick(R.id.clearExchange)
     public void clearExchangeClicked() {
@@ -123,7 +129,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     public void copyARSClicked() {
         CharSequence copy = editARS.getText();
         if (!Strings.isBlank(copy)) {
-            setTextOnClipboard("ARS", copy);
+            setTextOnClipboard(getString(R.string.text_ars), copy);
         }
     }
 
@@ -131,7 +137,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     public void copyUSDClicked() {
         CharSequence copy = editUSD.getText();
         if (!Strings.isBlank(copy)) {
-            setTextOnClipboard("USD", copy);
+            setTextOnClipboard(getString(R.string.text_usd), copy);
         }
     }
 
@@ -139,7 +145,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     public void copyBTCClicked() {
         CharSequence copy = editBTC.getText();
         if (!Strings.isBlank(copy)) {
-            setTextOnClipboard("BTC", copy);
+            setTextOnClipboard(getString(R.string.text_btc), copy);
         }
     }
 
@@ -147,7 +153,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     public void copyTotalArsClicked() {
         CharSequence copy = totalARS.getText();
         if (!Strings.isBlank(copy)) {
-            setTextOnClipboard("Total ARS", copy);
+            setTextOnClipboard(getString(R.string.text_total_ars), copy);
         }
     }
 
@@ -155,7 +161,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     public void copyTotalUsdClicked() {
         CharSequence copy = totalUSD.getText();
         if (!Strings.isBlank(copy)) {
-            setTextOnClipboard("Total USD", copy);
+            setTextOnClipboard(getString(R.string.text_total_usd), copy);
         }
     }
 
@@ -163,7 +169,7 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     public void copyTotalBtcClicked() {
         CharSequence copy = totalBTC.getText();
         if (!Strings.isBlank(copy)) {
-            setTextOnClipboard("Total BTC", copy);
+            setTextOnClipboard(getString(R.string.text_total_btc), copy);
         }
     }
 
@@ -205,19 +211,28 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
 
         setupToolbar();
         setupEditText();
+
+        officialCheckBox.setChecked(exchangeService.useOfficialRate());
+        officialCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exchangeService.setUseOfficialRate(officialCheckBox.isChecked());
+                marketTextView.setText((exchangeService.useOfficialRate()? R.string.title_market_official:R.string.title_market_blue));
+                setExchange(exchange);
+            }
+        });
+        marketTextView.setText((exchangeService.useOfficialRate()? R.string.title_market_official:R.string.title_market_blue));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         subscribeData();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         subscription.unsubscribe();
     }
 
@@ -315,31 +330,29 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
 
     private void setExchange(Exchange exchange) {
         this.exchange = exchange;
-
         rateUSD = exchange.getUSDValue();
-        rateARS = exchange.getARSValue();
-
+        rateARS = (exchangeService.useOfficialRate())?exchange.getARSValueOfficial():exchange.getARSValueBlue();
         reset();
     }
 
     private void reset() {
+        Timber.d("reset");
         bitcoinValue = DEFAULT_BTC_VALUE;
-
         arsValue = Calculations.calculateARSValue(rateARS, bitcoinValue);
         usdValue = Calculations.calculateUSDValue(rateUSD, bitcoinValue);
-
         editBTC.setText(Conversions.formatBitcoinAmount(bitcoinValue));
         editARS.setText(Conversions.formatCurrencyAmount(rateARS));
         editUSD.setText(Conversions.formatCurrencyAmount(rateUSD));
-
         calculateTotal();
     }
 
     private void setTextOnClipboard(String title, CharSequence copy) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(title, copy);
-        clipboard.setPrimaryClip(clip);
-        toast(R.string.text_saved_to_clipboard);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(clip);
+            toast(R.string.text_saved_to_clipboard);
+        }
     }
 
     private void calculateTotal() {
@@ -481,14 +494,10 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
 
     /**
      * Updated for Android N support
-     * @param file
+     * @param file File
      */
     private void shareReceipt(File file) {
-        
-        Timber.d("Share Receipt");
-      
         Uri uri = FileProvider.getUriForFile(CalculatorActivity.this, BuildConfig.APPLICATION_ID + ".provider", file);
-        
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, file.getName());
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -498,11 +507,11 @@ public class CalculatorActivity extends BaseActivity implements View.OnFocusChan
     }
 
     public void generateReceipt(String title) {
-        Timber.d("Generate Receipt");
+        String rateUsed = exchangeService.useOfficialRate()? getString(R.string.text_official):getString(R.string.text_blue);
         final WriterService writerService = new WriterService();
         writerService.writeReceiptFileObservable(CalculatorActivity.this, title, exchange,
-                String.valueOf(bitcoinValue), String.valueOf(arsValue),
-                String.valueOf(usdValue))
+                String.valueOf(bitcoinValue), Calculations.formatCurrency(arsValue),
+                Calculations.formatCurrency(usdValue), rateUsed)
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<File>() {

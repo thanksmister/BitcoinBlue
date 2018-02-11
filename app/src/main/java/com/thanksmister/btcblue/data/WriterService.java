@@ -26,6 +26,7 @@ package com.thanksmister.btcblue.data;
 import android.content.Context;
 import android.os.Environment;
 
+import com.thanksmister.btcblue.R;
 import com.thanksmister.btcblue.data.api.model.Exchange;
 import com.thanksmister.btcblue.utils.Conversions;
 import com.thanksmister.btcblue.utils.Dates;
@@ -50,7 +51,8 @@ public class WriterService {
     }
 
     public Observable<File> writeReceiptFileObservable(final Context context, final String title, final Exchange exchange,
-                                                       final String btcValue, final String arsValue, final String usdValue) {
+                                                       final String btcValue, final String arsValue, final String usdValue,
+                                                       final String rateUsed) {
 
         return Observable.create(new Observable.OnSubscribe<File>() {
             @Override
@@ -60,33 +62,34 @@ public class WriterService {
                 String timestamp = Dates.parseFileTimeStamp(date);
                 final String filename = (title.isEmpty()) ? timestamp : (title + "_" + timestamp) + ".csv";
                 final File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-                Timber.d("File: " + outFile);
                 try {
                     BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 
-                    bw.append("NAME");
+                    bw.append(context.getString(R.string.column_name));
                     bw.append(',');
 
-                    bw.append("DATE");
+                    bw.append(context.getString(R.string.column_date));
                     bw.append(',');
 
-                    bw.append("EXCHANGE");
+                    bw.append(context.getString(R.string.column_exchange));
                     bw.append(',');
 
-                    bw.append("ARS/USDB");
+                    bw.append(context.getString(R.string.column_ars_usdb));
                     bw.append(',');
 
-                    bw.append("ARS/USD");
+                    bw.append(context.getString(R.string.column_ars_usd));
                     bw.append(',');
 
-                    bw.append("ARS AMOUNT");
+                    bw.append(context.getString(R.string.column_ars_amount));
                     bw.append(',');
 
-                    bw.append("USD AMOUNT");
+                    bw.append(context.getString(R.string.column_usd_amount));
                     bw.append(',');
 
-                    bw.append("BTC AMOUNT");
+                    bw.append(context.getString(R.string.column_btc_amount));
                     bw.append(',');
+
+                    bw.append(context.getString(R.string.column_rate_used));
 
                     bw.newLine();
 
@@ -112,7 +115,9 @@ public class WriterService {
                     bw.append(',');
 
                     bw.append(btcValue);
-                    // bw.append(',');
+                    bw.append(',');
+
+                    bw.append(rateUsed);
 
                     bw.newLine();
                     bw.close();
@@ -122,7 +127,7 @@ public class WriterService {
 
                 } catch (Exception e) {
                     Timber.e(e.getMessage());
-                    String err = (e.getMessage() == null) ? "Failed to write file." : e.getMessage();
+                    String err = (e.getMessage() == null) ? context.getString(R.string.error_failed_write_file) : e.getMessage();
                     subscriber.onError(new Throwable(err));
                 }
             }

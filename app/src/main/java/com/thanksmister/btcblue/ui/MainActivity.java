@@ -298,9 +298,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void setExchange(Exchange exchange) {
         if (exchange == null) return;
-        Timber.e("Exchange date: " + exchange.getCreated_at());
-        Timber.e("Exchange source: " + exchange.getSource());
-        Timber.e("Exchange ask: " + exchange.getAsk());
         showContent(true);
         setMarketData(exchange, MarketViewType.ARS_USDB);
         setMarketData(exchange, MarketViewType.ARS_BTC);
@@ -402,11 +399,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         exchange = new DisplayExchange();
         exchange.setDisplayName("Bitsquare");
         exchange.setExchangeName("bitsquare");
-        exchanges.add(exchange);
-
-        exchange = new DisplayExchange();
-        exchange.setDisplayName("BTC-e");
-        exchange.setExchangeName("btce");
         exchanges.add(exchange);
 
         exchange = new DisplayExchange();

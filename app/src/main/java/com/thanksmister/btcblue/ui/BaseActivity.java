@@ -34,6 +34,8 @@ import com.thanksmister.btcblue.Injector;
 import com.thanksmister.btcblue.R;
 import com.thanksmister.btcblue.utils.ServiceUtils;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import butterknife.ButterKnife;
 import rx.functions.Action0;
 import timber.log.Timber;
@@ -42,6 +44,10 @@ import timber.log.Timber;
  * Base activity which sets up a per-activity object graph and performs injection.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private AtomicBoolean hasNetwork = new AtomicBoolean(true);
+    private Snackbar snackbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,20 +72,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         getApplicationContext().registerReceiver(connReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-    // TODO replace with RxAndroid
-    private BroadcastReceiver connReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-            NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-                // do nothing
-            } else {
-                snack(getString(R.string.error_no_internet));
-            }
-        }
-    };
-
     protected void reportError(Throwable throwable) {
+        Timber.d("reportError");
         if (throwable != null && throwable.getMessage() != null) {
             Timber.e("Data Error: " + throwable.getMessage());
         } else {
@@ -92,12 +86,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void handleError(Throwable throwable, String label, Action0 action) {
+        Timber.d("handleError");
         if (ServiceUtils.isNetworkError(throwable)) {
             Timber.e("Data Error: " + "Code 503");
             snackAction(getString(R.string.error_no_internet), label, action);
         } else if (ServiceUtils.isHttp401Error(throwable)) {
             Timber.e("Data Error: " + "Code 401");
-            snackAction(getString(R.string.error_no_internet), label, action);
+            snackAction(getString(R.string.error_generic_error), label, action);
         } else if (ServiceUtils.isHttp500Error(throwable)) {
             Timber.e("Data Error: " + "Code 500");
             snackAction(getString(R.string.error_service_error), label, action);
@@ -115,8 +110,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void snack(final String message) {
-        Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG)
-                .show();
+        snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), message, Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 
     protected void snack(final int message) {
@@ -153,4 +148,43 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void toast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+    private void handleNetworkConnect() {
+        Timber.d("handleNetworkConnect");
+        if(!hasNetworkConnectivity()) {
+            snackbar.dismiss();
+            hasNetwork.set(true);
+        }
+    }
+
+    private void handleNetworkDisconnect() {
+        Timber.d("handleNetworkDisconnect");
+        if(snackbar != null && !hasNetworkConnectivity()) {
+            snack(getString(R.string.error_no_internet));
+            hasNetwork.set(false);
+        }
+    }
+
+    private boolean hasNetworkConnectivity() {
+        return hasNetwork.get();
+    }
+
+    /*
+     * Network connectivity receiver to notify client of the network disconnect issues and
+     * to clear any network notifications when reconnected. It is easy for network connectivity
+     * to run amok that is why we only notify the user once for network disconnect with
+     * a boolean flag.
+     */
+    private BroadcastReceiver connReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+            assert connectivityManager != null;
+            NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+                handleNetworkConnect();
+            } else {
+                handleNetworkDisconnect();
+            }
+        }
+    };
 }

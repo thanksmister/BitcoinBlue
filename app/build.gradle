@@ -21,7 +21,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 def versionMajor = 0
 def versionMinor = 1
-def versionPatch = 8
+def versionPatch = 9
 def versionBuild = 0
 
 android {

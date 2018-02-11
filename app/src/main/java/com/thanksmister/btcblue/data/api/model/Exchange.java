@@ -119,31 +119,21 @@ public class Exchange {
         return Calculations.calculateAverageBidAskFormatted(blue_bid, blue_ask);
     }
 
-    public double getBlueValue() {
-        return Calculations.calculateAverageBidAskValue(blue_bid, blue_ask);
-    }
-
-    public String getUSDFormatted() {
-        return Calculations.calculateAverageBidAskFormatted(bid, ask);
-    }
-
     public double getUSDValue() {
         return Calculations.calculateAverageBidAskValue(bid, ask);
-    }
-
-    public String getARSFormatted() {
-        return Calculations.calculateBlueARSFormatted(getBlueValue(), getUSDValue());
     }
 
     public String getOfficialFormatted() {
         return Calculations.calculateAverageBidAskFormatted(official_bid, official_ask);
     }
 
-    public String getOfficialARSFormatted() {
-        return Calculations.calculateAverageBidAskFormatted(getOfficialFormatted(), official_ask);
+    public double getARSValueBlue() {
+        Double value = Calculations.calculateAverageBidAskValue(blue_bid, blue_ask);
+        return Calculations.calculateBlueARSValue(value, getUSDValue());
     }
 
-    public double getARSValue() {
-        return Calculations.calculateBlueARSValue(getBlueValue(), getUSDValue());
+    public double getARSValueOfficial() {
+        Double value = Calculations.calculateAverageBidAskValue(official_bid, official_ask);
+        return Calculations.calculateBlueARSValue(value, getUSDValue());
     }
 }

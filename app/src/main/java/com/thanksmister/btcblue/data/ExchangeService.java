@@ -28,6 +28,7 @@ import com.thanksmister.btcblue.data.api.model.Exchange;
 import com.thanksmister.btcblue.data.api.transforms.ResponseToBluelytics;
 import com.thanksmister.btcblue.data.api.transforms.ResponseToExchange;
 import com.thanksmister.btcblue.data.api.transforms.ResponseToString;
+import com.thanksmister.btcblue.data.prefs.BooleanPreference;
 import com.thanksmister.btcblue.data.prefs.StringPreference;
 import com.thanksmister.btcblue.utils.Doubles;
 import com.thanksmister.btcblue.utils.NetworkUtils;
@@ -51,6 +52,7 @@ public class ExchangeService {
     public static final String PREFS_DOLLAR_BLUE_EXPIRE_TIME = "pref_dollar_blue_expire";
     public static final String PREFS_EXCHANGE_EXPIRE_TIME = "pref_exchange_expire";
     public static final String PREFS_SELECTED_EXCHANGE = "selected_exchange_source";
+    public static final String PREFS_USE_OFFICIAL = "pref_use_official";
 
     public static final int CHECK_EXCHANGE_DATA = 2 * 60 * 1000;// 5 minutes
     public static final int CHECK_BLUE_DOLLAR_DATA = 60 * 60 * 1000;// 1 HOUR
@@ -80,6 +82,16 @@ public class ExchangeService {
         Timber.d("Selected Name: " + preference.get());
         if (preference.get().equals("")) return "bitstamp";
         return preference.get().toLowerCase();
+    }
+
+    public void setUseOfficialRate(Boolean value) {
+        BooleanPreference preference = new BooleanPreference(sharedPreferences, PREFS_USE_OFFICIAL);
+        preference.set(value);
+    }
+
+    public Boolean useOfficialRate() {
+        BooleanPreference preference = new BooleanPreference(sharedPreferences, PREFS_USE_OFFICIAL, false);
+        return preference.get();
     }
 
     private Observable<Exchange> getBluelyticsSubscription(final Exchange exchange) {

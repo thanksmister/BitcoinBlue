@@ -21,6 +21,9 @@ package com.thanksmister.btcblue.utils;
 import android.text.InputFilter;
 import android.text.Spanned;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class Calculations {
     public static String calculateAverageBidAskFormatted(String bid, String ask) {
         return Conversions.formatCurrencyAmount(calculateAverageBidAskValue(bid, ask));
@@ -76,14 +79,17 @@ public class Calculations {
 
     public static double calculateSaleBTC(double saleAmountARS, double arsAmount, double btcAmount) {
         String btc = Conversions.formatBitcoinAmount((saleAmountARS / arsAmount) * btcAmount);
-
         return Doubles.convertToDouble(btc);
     }
 
     public static double calculateSaleARS(double sale, double btcAmount) {
         String ars = Conversions.formatBitcoinAmount(sale * btcAmount);
-
         return Doubles.convertToDouble(ars);
+    }
+
+    public static String formatCurrency(double amountToFormat) {
+        DecimalFormat format = new DecimalFormat("#.##");
+        return format.format(amountToFormat);
     }
 
     public static class DecimalPlacesInputFilter implements InputFilter {

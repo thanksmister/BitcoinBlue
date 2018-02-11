@@ -58,7 +58,8 @@
     <string name="official_text_btc">OFFICIAL: %1$s ARS/BTC</string>
     <string name="buy">BUY</string>
     <string name="sell">SELL</string>
-    <string name="ars_amount">DOLLAR BLUE AMOUNT</string>
+    <string name="ars_amount">ARS AMOUNT</string>
+    <string name="ars_amount_official">ARS AMOUNT</string>
     <string name="ars">ARS</string>
  
     <string name="percent">  %  </string>
@@ -67,7 +68,7 @@
     <string name="btc_amount">BTC AMOUNT</string>
     <string name="button_reset">RESET</string>
     <string name="date_updated">UPDATED </string>
-    <string name="toast_data_fresh">Data appears fresh...</string>
+    <string name="toast_data_fresh">Data appears fresh…</string>
     <string name="data_provided_by"><![CDATA[Developed by <a href="http://thanksmister.com">ThanksMister</a> with data provided by <a href="http://bluelytics.com.ar">Bluelytics</a> and <a href="https://bitcoinaverage.com">BitcoinAverage</a>.]]></string>
     
     <string name="text_saved_to_clipboard"> saved to clipboard!</string>
@@ -92,12 +93,32 @@
     <string name="error_service_error">Service produced resource not found error.</string>
     
     <string name="menu_create_receipt">Export data</string>
-    <string name="dialog_progress">Progress...</string>
-    <string name="dialog_progress_text">Initializing data...</string>
-    <string name="title_market">MARKET</string>
+    <string name="dialog_progress">Progress…</string>
+    <string name="dialog_progress_text">Initializing data…</string>
+    <string name="title_market_blue">MARKET (BLUE)</string>
+    <string name="title_market_official">MARKET (OFFICIAL</string>
     <string name="title_sale_price">SALE PRICE</string>
     <string name="title_total">TOTAL</string>
     <string name="snack_retry">Retry</string>
     <string name="spinner_no_exchange_data">No Exchange Data</string>
+    <string name="text_total_usd">Total USD</string>
+    <string name="text_total_btc">Total BTC</string>
+    <string name="text_total_ars">Total ARS</string>
+    <string name="text_btc">BTC</string>
+    <string name="text_ars">ARS</string>
+    <string name="text_usd">USD</string>
+    <string name="text_blue">BLUE</string>
+    <string name="text_official">OFICIAL</string>
+    <string name="text_use_official_rate">Use official rate</string>
+    <string name="column_name">NAME</string>
+    <string name="column_date">DATE</string>
+    <string name="column_exchange">EXCHANGE</string>
+    <string name="column_ars_usdb">ARS/USDB</string>
+    <string name="column_ars_usd">ARS/USD</string>
+    <string name="column_ars_amount">ARS AMOUNT</string>
+    <string name="column_usd_amount">USD AMOUNT</string>
+    <string name="column_btc_amount">BTC AMOUNT</string>
+    <string name="column_rate_used">RATE USED</string>
+    <string name="error_failed_write_file">Failed to write file.</string>
 
 </resources>
