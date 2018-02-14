@@ -91,8 +91,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             Timber.e("Data Error: " + "Code 503");
             snackAction(getString(R.string.error_no_internet), label, action);
         } else if (ServiceUtils.isHttp401Error(throwable)) {
-            Timber.e("Data Error: " + "Code 401");
-            snackAction(getString(R.string.error_generic_error), label, action);
+            // na-da Ignore this because its a nonce error
         } else if (ServiceUtils.isHttp500Error(throwable)) {
             Timber.e("Data Error: " + "Code 500");
             snackAction(getString(R.string.error_service_error), label, action);

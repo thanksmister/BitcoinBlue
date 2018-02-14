@@ -50,8 +50,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
@@ -132,9 +134,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     Handler handler;
     ExchangeAdapter adapter;
-
-    private Observable<Exchange> exchangeObservable;
-    private Observable<Exchange> exchangeUpdateObservable;
 
     Subscription subscription = Subscriptions.empty();
     Subscription updateSubscription = Subscriptions.empty();
@@ -244,42 +243,50 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     public void subscribeData() {
         // database data
-        exchangeObservable = bindActivity(this, dbManager.exchangeQuery(exchangeService.getSelectedExchangeName()));
-        subscription = exchangeObservable.subscribe(new Action1<Exchange>() {
-            @Override
-            public void call(Exchange exchange) {
-                if (exchange != null) {
-                    updateSelectedExchange(exchange);
-                }
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                reportError(throwable);
-            }
-        });
+        Observable<Exchange> exchangeObservable = bindActivity(this, dbManager.exchangeQuery(exchangeService.getSelectedExchangeName()));
+        subscription = exchangeObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Exchange>() {
+                    @Override
+                    public void call(Exchange exchange) {
+                        if (exchange != null) {
+                            updateSelectedExchange(exchange);
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Timber.e(throwable.getMessage());
+                        reportError(throwable);
+                    }
+                });
     }
 
     public void updateData() {
         // update data
-        exchangeUpdateObservable = bindActivity(this, exchangeService.getExchangeObservable(exchangeService.getSelectedExchangeName()));
-        updateSubscription = exchangeUpdateObservable.subscribe(new Action1<Exchange>() {
-            @Override
-            public void call(Exchange exchange) {
-                onRefreshStop();
-                dbManager.updateExchange(exchange);
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                onRefreshStop();
-                handleError(throwable, getString(R.string.snack_retry), new Action0() {
+        Observable<Exchange> exchangeUpdateObservable = bindActivity(this, exchangeService.getExchangeObservable(exchangeService.getSelectedExchangeName()));
+        updateSubscription = exchangeUpdateObservable
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Exchange>() {
                     @Override
-                    public void call() {
-                        updateData();
+                    public void call(Exchange exchange) {
+                        onRefreshStop();
+                        dbManager.updateExchange(exchange);
                     }
-                });
-            }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Timber.e(throwable.getMessage());
+                        onRefreshStop();
+                        handleError(throwable, getString(R.string.snack_retry), new Action0() {
+                            @Override
+                            public void call() {
+                                updateData();
+                            }
+                        });
+                    }
         });
     }
 
